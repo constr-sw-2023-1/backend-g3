@@ -2,8 +2,12 @@ package br.pucrs.csw.professors.web;
 
 import br.pucrs.csw.professors.pojo.Professor;
 import br.pucrs.csw.professors.service.ProfessorService;
+import br.pucrs.csw.professors.web.input.ProfessorInput;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/professors")
@@ -16,14 +20,31 @@ public class ProfessorController {
     }
 
     @PostMapping
-    public ResponseEntity<Professor> create(@RequestBody Professor professorToCreate) {
+    public ResponseEntity<Professor> create(@RequestBody ProfessorInput professorToCreate) {
         professorToCreate.isValid();
-        Professor createdProfessor = professorService.create(professorToCreate);
+        Professor createdProfessor = professorService.create(professorToCreate.toProfessor());
         return ResponseEntity.ok(createdProfessor);
     }
+
+    @GetMapping
+    public ResponseEntity<List<Professor>> getAll() {
+        List<Professor> professors = professorService.getAll();
+        return ResponseEntity.ok(professors);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) {
+        professorService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    //@TOdo terminar
+    public ResponseEntity<Professor> deleteUser(@PathVariable("id") String id, @RequestBody ProfessorInput input) {
+        Optional<Professor> professorUpdated = professorService.update(id, input);
+        return ResponseEntity.noContent().build();
+    }
     /*
-    @Todo Fazer Get User (filtar por enable True)
-    @Todo Fazer Delete /{id} (buscar pelo id, fazer PUT com flag enable false)
     @Todo Fazer PUT /{id} (Executar put no keycloak)
     @Todo Fazer PATCH /{id} (Buscar pelo id, modificar o que veio na request, fazer put no keycloak)
     @Todo Fazer GET /{id} (Buscar pelo id (caso flag enable fase, devolver 404)

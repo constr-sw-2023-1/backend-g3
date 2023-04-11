@@ -1,25 +1,24 @@
 package br.pucrs.csw.professors.keycloak;
 
+import br.pucrs.csw.professors.exceptions.InvalidUserOrPasswordLoginException;
 import br.pucrs.csw.professors.exceptions.UnauthorizedOperation;
 import br.pucrs.csw.professors.exceptions.UserNameAlreadyExists;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakConfig;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUser;
+import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUserToCreate;
 import br.pucrs.csw.professors.keycloak.pojo.LoginResponse;
 import br.pucrs.csw.professors.pojo.Professor;
 import br.pucrs.csw.professors.security.RequestContext;
 import br.pucrs.csw.professors.web.login.LoginRequest;
-import org.apache.juli.logging.Log;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.util.Collections;
+import java.util.*;
 
 public class KeyCloakUserAPIClientService {
 
@@ -32,10 +31,31 @@ public class KeyCloakUserAPIClientService {
     }
 
 
+    public LoginResponse login(LoginRequest request) {
+        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.put("client_id", Collections.singletonList(keyCloakConfig.clientId()));
+        body.put("client_secret", Collections.singletonList(keyCloakConfig.clientSecret()));
+        body.put("username", Collections.singletonList(request.username()));
+        body.put("password", Collections.singletonList(request.password()));
+        body.put("grant_type", Collections.singletonList("password"));
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, httpHeaders);
+        try {
+            ResponseEntity<LoginResponse> response = restTemplate.postForEntity(keyCloakConfig.authBaseUrl(),
+                    entity, LoginResponse.class);
+            return response.getBody();
+        } catch (HttpStatusCodeException ex) {
+            throw ex.getStatusCode().value() == 401
+                    ? new InvalidUserOrPasswordLoginException()
+                    : ex;
+        }
+    }
+
     public Professor create(Professor professorToCreate) {
-        KeyCloakUser keyCloakUser = new KeyCloakUser(professorToCreate);
+        KeyCloakUserToCreate keyCloakUser = new KeyCloakUserToCreate(professorToCreate);
         HttpHeaders httpHeaders = buildAuthHeader();
-        HttpEntity<KeyCloakUser> entity = new HttpEntity<>(keyCloakUser, httpHeaders);
+        HttpEntity<KeyCloakUserToCreate> entity = new HttpEntity<>(keyCloakUser, httpHeaders);
         try {
             URI location = restTemplate.postForLocation(keyCloakConfig.userBaseUrl(), entity);
             String[] locationParts = location.getPath().split("/");
@@ -50,24 +70,33 @@ public class KeyCloakUserAPIClientService {
         }
     }
 
-    public LoginResponse login(LoginRequest request) {
-        LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.put("client_id", Collections.singletonList(keyCloakConfig.clientId()));
-        body.put("client_secret", Collections.singletonList(keyCloakConfig.clientSecret()));
-        body.put("username", Collections.singletonList(request.username()));
-        body.put("password", Collections.singletonList(request.password()));
-        body.put("grant_type", Collections.singletonList("password"));
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body,httpHeaders);
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(keyCloakConfig.authBaseUrl(),
-                entity, LoginResponse.class);
-        return response.getBody();
+    public List<KeyCloakUser> getAll() {
+        HttpHeaders httpHeaders = buildAuthHeader();
+        HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
+        try {
+            ResponseEntity<KeyCloakUser[]> response = restTemplate.exchange(keyCloakConfig.userBaseUrl(),
+                    HttpMethod.GET, entity, KeyCloakUser[].class);
+            if (response.getBody() == null) return new ArrayList<>();
+            return Arrays.stream(response.getBody()).toList();
+        } catch (HttpStatusCodeException ex) {
+            if (ex.getStatusCode().value() == 403) {
+                throw new UnauthorizedOperation();
+            }
+            throw ex;
+        }
     }
 
     private HttpHeaders buildAuthHeader() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(RequestContext.getAccessToken());
         return httpHeaders;
+    }
+
+    public Optional<KeyCloakUser> getUser(String id) {
+        return Optional.empty();
+    }
+
+    public void update(String id, KeyCloakUser keyCloakUser) {
+
     }
 }

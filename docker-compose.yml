@@ -1,6 +1,8 @@
 version: '3.4'
 networks:
   grupo3:
+volumes:
+  grupo3-keycloak-data:
 services:
   # Keycloak
   keycloak:

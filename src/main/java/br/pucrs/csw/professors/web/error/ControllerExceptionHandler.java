@@ -28,6 +28,13 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatusCode.valueOf(403));
     }
 
+    @ExceptionHandler(InvalidUserOrPasswordLoginException.class)
+    public ResponseEntity<ErrorDetails> invalidUserNameOrPasswordException(InvalidUserOrPasswordLoginException ex) {
+        String message = "Invalid username or password";
+        ErrorDetails errorDetails = new ErrorDetails("OA-002", message);
+        return new ResponseEntity<>(errorDetails, HttpStatusCode.valueOf(401));
+    }
+
     @ExceptionHandler(InvalidEmailException.class)
     public ResponseEntity<ErrorDetails> invalidEmailOnCreation(InvalidEmailException ex) {
         String message = String.format("Email: %s should follow pattern %s", ex.email, ex.regexPattern);

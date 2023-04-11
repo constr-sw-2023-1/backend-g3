@@ -27,6 +27,7 @@ public class TokenValidatorInterceptor implements HandlerInterceptor {
             throw new MissingTokenAuthException();
         }
         String token = getToken(header);
+        isTokenValid(token);
         RequestContext.setAccessToken(token);
         return true;
     }

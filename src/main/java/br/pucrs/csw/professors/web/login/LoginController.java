@@ -2,6 +2,7 @@ package br.pucrs.csw.professors.web.login;
 
 import br.pucrs.csw.professors.keycloak.KeyCloakUserAPIClientService;
 import br.pucrs.csw.professors.keycloak.pojo.LoginResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +17,8 @@ public class LoginController {
     }
 
     //@TODO tratamento de erro.
-    @PostMapping
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
+    public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
         LoginResponse response = keyCloakUserAPIClientService.login(loginRequest);
         return ResponseEntity.ok(response);
     }

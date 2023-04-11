@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -36,7 +37,7 @@ public class KeyCloakUserAPIClientService {
         HttpHeaders httpHeaders = buildAuthHeader();
         HttpEntity<KeyCloakUser> entity = new HttpEntity<>(keyCloakUser, httpHeaders);
         try {
-            URI location = restTemplate.postForLocation(keyCloakConfig.authBaseUrl(), entity);
+            URI location = restTemplate.postForLocation(keyCloakConfig.userBaseUrl(), entity);
             String[] locationParts = location.getPath().split("/");
             String createdId = locationParts[locationParts.length - 1];
             return professorToCreate.withId(createdId);
@@ -58,8 +59,9 @@ public class KeyCloakUserAPIClientService {
         body.put("grant_type", Collections.singletonList("password"));
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(keyCloakConfig.userBaseUrl(),
-                new HttpEntity<>(body, httpHeaders), LoginResponse.class);
+        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body,httpHeaders);
+        ResponseEntity<LoginResponse> response = restTemplate.postForEntity(keyCloakConfig.authBaseUrl(),
+                entity, LoginResponse.class);
         return response.getBody();
     }
 

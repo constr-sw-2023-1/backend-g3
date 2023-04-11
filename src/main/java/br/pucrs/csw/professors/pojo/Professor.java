@@ -6,7 +6,7 @@ import br.pucrs.csw.professors.exceptions.MissingProfessorEssentialPropertiesExc
 public record Professor(String id, String username, String firstName, String lastName, String password) {
 
     private static final String VALID_EMAIL_REGEX = "([-!#-'*+/-9=?A-Z^-~]+(\\.[-!#-'*+/-9=?A-Z^-~]+)*|\"([]!#-" +
-            "[^-~ \\t]|(\\\\(\\t -~]))+\")@([-!#-'*+/-9=?A-Z^-~]+(\\.[-!#-'*+/-9=?A-Z^-~]+)*|\\([\\t -Z^-~]*])";
+            "[^-~ \\t]|(\\t -~])+\")@([-!#-'*+/-9=?A-Z^-~]+(\\.[-!#-'*+/-9=?A-Z^-~]+)*|\\([\\t -Z^-~]*])";
 
     public Professor withId(String id) {
         return new Professor(id, this.username, this.firstName, this.lastName, this.password);

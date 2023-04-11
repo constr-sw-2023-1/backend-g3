@@ -1,9 +1,6 @@
 version: '3.4'
 networks:
   grupo3:
-volumes:
-  grupo3-keycloak-data:
-    external: true
 services:
   # Keycloak
   keycloak:
@@ -15,7 +12,5 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=a12345678
       - KEYCLOAK_FRONTEND_URL=http://localhost:8090/auth
-    volumes:
-      - grupo3-keycloak-data:/opt/jboss/keycloak/standalone/data
     networks:
       - grupo3

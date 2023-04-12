@@ -4,7 +4,10 @@ import br.pucrs.csw.professors.exceptions.MissingTokenAuthException;
 import br.pucrs.csw.professors.exceptions.TokenAuthException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -44,7 +47,7 @@ public class TokenValidatorInterceptor implements HandlerInterceptor {
         HttpEntity entity = new HttpEntity(httpHeaders);
 
         try {
-            ResponseEntity<String> response = restTemplate.exchange(keyCloakAuthUrl, HttpMethod.GET, entity, String.class);
+            restTemplate.exchange(keyCloakAuthUrl, HttpMethod.GET, entity, String.class);
             return true;
         } catch (HttpClientErrorException ex) {
             if (ex.getStatusCode().equals(HttpStatusCode.valueOf(401))) {

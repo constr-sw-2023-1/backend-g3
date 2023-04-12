@@ -19,7 +19,7 @@ public record KeyCloakUser(String id, String username, boolean enabled, boolean 
 
     public KeyCloakUser withFirstName(String firstName) {
         return new KeyCloakUser(id, username, enabled, emailVerified,
-                firstName != null ? firstName: this.firstName, lastName, email, attributes);
+                firstName != null ? firstName : this.firstName, lastName, email, attributes);
     }
 
     public KeyCloakUser withLastName(String lastName) {

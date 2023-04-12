@@ -1,5 +1,6 @@
 package br.pucrs.csw.professors.pojo;
 
+
 public record Professor(String id, String username, String firstName, String lastName, String password) {
 
     public Professor withId(String id) {

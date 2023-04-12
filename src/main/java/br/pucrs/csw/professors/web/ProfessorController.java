@@ -41,7 +41,7 @@ public class ProfessorController {
     @PutMapping("/{id}")
     //@TOdo terminar
     public ResponseEntity<Professor> deleteUser(@PathVariable("id") String id, @RequestBody ProfessorInput input) {
-        Optional<Professor> professorUpdated = professorService.update(id, input);
+        Optional<Professor> professorUpdated = professorService.updateUserById(id, input);
         return ResponseEntity.noContent().build();
     }
     /*
@@ -63,32 +63,27 @@ public class ProfessorController {
 //        }
 //    }
 //
-//    @GetMapping("/users/{id}")
-//    public ResponseEntity<User> getUserById(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String id) {
-//        try {
-//            String accessToken = getTokenFromAuthorizationHeader(authorizationHeader);
-//            User user = keycloakClient.getUserById(accessToken, id);
-//            if (user == null) {
-//                return ResponseEntity.notFound().build();
-//            } else {
-//                return ResponseEntity.ok(user);
-//            }
-//        } catch (KeycloakClientException e) {
-//            return ResponseEntity.status(e.getStatus()).build();
-//        }
-//    }
-//
-//    @PutMapping("/users/{id}")
-//    public ResponseEntity<Void> updateUser(@RequestBody User user, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String id) {
-//        try {
-//            String accessToken = getTokenFromAuthorizationHeader(authorizationHeader);
-//            keycloakClient.updateUser(accessToken, id, user.getUsername(), user.getFirstName(), user.getLastName(), user.isEnabled());
-//            return ResponseEntity.ok().build();
-//        } catch (KeycloakClientException e) {
-//            return ResponseEntity.status(e.getStatus()).build();
-//        }
-//    }
-//
+    @GetMapping("/{id}")
+    public ResponseEntity<Professor> getUserById(
+            @RequestHeader("Authorization") String authorizationHeader, @PathVariable String id) {
+            Professor professor = professorService.getUserById(id);
+            if (professor == null) return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(professor);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Professor> updateUser(@RequestBody ProfessorInput professorData, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String id) {
+        Optional<Professor> updatedProfessor = professorService.updateUserById(id, professorData);
+        if (updatedProfessor.isPresent()) {
+            return ResponseEntity.ok(updatedProfessor.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+}
+
+
+
 //    @PatchMapping("/users/{id}")
 //    public ResponseEntity<Void> updatePassword(@RequestBody PasswordUpdate passwordUpdate, @RequestHeader("Authorization") String authorizationHeader, @PathVariable String id) {
 //        try {
@@ -119,4 +114,3 @@ public class ProfessorController {
 //        // Retornar o código de status 200 se a requisição foi bem sucedida
 //        return ResponseEntity.ok().build();
 //    }
-}

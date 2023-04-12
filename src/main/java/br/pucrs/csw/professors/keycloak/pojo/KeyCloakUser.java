@@ -27,11 +27,6 @@ public record KeyCloakUser(String id, String username, boolean enabled, boolean 
                 firstName, lastName != null ? lastName : this.lastName, email, attributes);
     }
 
-    public KeyCloakUser withEmail(String email) {
-        return new KeyCloakUser(id, username, enabled, emailVerified,
-                firstName, lastName, email != null ? email : this.email, attributes);
-    }
-
     public KeyCloakUser withPassword(String password) {
         if (password != null) {
             attributes.put("password", password);

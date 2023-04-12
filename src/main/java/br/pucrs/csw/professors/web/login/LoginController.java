@@ -16,7 +16,6 @@ public class LoginController {
         this.keyCloakUserAPIClientService = keyCloakUserAPIClientService;
     }
 
-    //@TODO tratamento de erro.
     @RequestMapping(method = RequestMethod.POST, consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity<LoginResponse> login(LoginRequest loginRequest) {
         LoginResponse response = keyCloakUserAPIClientService.login(loginRequest);

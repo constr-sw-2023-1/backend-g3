@@ -3,6 +3,7 @@ package br.pucrs.csw.professors.keycloak;
 import br.pucrs.csw.professors.exceptions.InvalidUserOrPasswordLoginException;
 import br.pucrs.csw.professors.exceptions.UnauthorizedOperation;
 import br.pucrs.csw.professors.exceptions.UserNameAlreadyExists;
+import br.pucrs.csw.professors.exceptions.UserNotFoundException;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakConfig;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUser;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUserToCreate;
@@ -22,8 +23,8 @@ import java.util.*;
 
 public class KeyCloakUserAPIClientService {
 
-    private RestTemplate restTemplate;
-    private KeyCloakConfig keyCloakConfig;
+    private final RestTemplate restTemplate;
+    private final KeyCloakConfig keyCloakConfig;
 
     public KeyCloakUserAPIClientService(RestTemplate restTemplate, KeyCloakConfig keyCloakConfig) {
         this.restTemplate = restTemplate;
@@ -86,17 +87,39 @@ public class KeyCloakUserAPIClientService {
         }
     }
 
+    public Optional<KeyCloakUser> getUser(String id) {
+        HttpHeaders httpHeaders = buildAuthHeader();
+        HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
+        try {
+            ResponseEntity<KeyCloakUser> response = restTemplate.exchange(keyCloakConfig.userBaseUrl() + "/" + id,
+                    HttpMethod.GET, entity, KeyCloakUser.class);
+            return Optional.ofNullable(response.getBody());
+        } catch (HttpStatusCodeException ex) {
+           return switch (ex.getStatusCode().value()) {
+                case 404 -> Optional.empty();
+                case 403 -> throw new UnauthorizedOperation();
+                default -> throw ex;
+            };
+        }
+    }
+
+    public void update(String id, KeyCloakUser keyCloakUser) {
+        HttpHeaders httpHeaders = buildAuthHeader();
+        HttpEntity<KeyCloakUser> entity = new HttpEntity<>(keyCloakUser, httpHeaders);
+        try {
+            restTemplate.exchange(keyCloakConfig.userBaseUrl() + "/" + id,
+                    HttpMethod.PUT, entity, KeyCloakUser.class);
+        } catch (HttpStatusCodeException ex) {
+            if (ex.getStatusCode().value() == 403) {
+                throw new UnauthorizedOperation();
+            }
+            throw ex;
+        }
+    }
+
     private HttpHeaders buildAuthHeader() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setBearerAuth(RequestContext.getAccessToken());
         return httpHeaders;
-    }
-
-    public Optional<KeyCloakUser> getUser(String id) {
-        return Optional.empty();
-    }
-
-    public void update(String id, KeyCloakUser keyCloakUser) {
-
     }
 }

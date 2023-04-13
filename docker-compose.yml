@@ -4,15 +4,33 @@ networks:
 volumes:
   grupo3-keycloak-data:
 services:
-  # Keycloak
-  keycloak:
-    container_name: keycloak
-    image: jboss/keycloak:latest
-    ports:
-      - 8090:8080
-    environment:
-      - KEYCLOAK_USER=admin
-      - KEYCLOAK_PASSWORD=a12345678
-      - KEYCLOAK_FRONTEND_URL=http://localhost:8090/auth
-    networks:
-      - grupo3
+ keycloak:
+   container_name: keycloak
+   image: jboss/keycloak:latest
+   volumes:
+     - grupo3-keycloak-data:/opt/jboss/keycloak/standalone/data
+     - ./src/main/resources/keycloak/realm-export.json:/opt/jboss/keycloak/import-realm.json
+   command:
+     - "-Dkeycloak.import=/opt/jboss/keycloak/import-realm.json"
+   ports:
+     - 8090:8080
+   environment:
+     - KEYCLOAK_USER=admin
+     - KEYCLOAK_PASSWORD=a12345678
+     - KEYCLOAK_FRONTEND_URL=http://localhost:8090/auth
+   networks:
+     - grupo3
+
+ app:
+  container_name: app_backend_g3
+  build: .
+  environment:
+   - KEYCLOAK_AUTH_VALIDATOR_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/userinfo
+   - KEYCLOAK_AUTH_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/token
+   - KEYCLOAK_USER_URL=http://keycloak:8080/auth/admin/realms/csw/users
+  ports:
+    - 8080:8080
+  networks:
+    - grupo3
+  depends_on:
+    - keycloak

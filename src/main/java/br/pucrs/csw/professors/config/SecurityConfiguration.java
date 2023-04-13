@@ -9,6 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 public class SecurityConfiguration implements WebMvcConfigurer {
 
+    @Value("#{'${required.path.token.interceptor}'.split(',\\s*')}")
+    private String[] interceptorPaths;
     @Value("${keycloak.auth.validator.url}")
     private String keyCloakBaseUrl;
     @Autowired
@@ -17,7 +19,6 @@ public class SecurityConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new TokenValidatorInterceptor(restTemplate, keyCloakBaseUrl))
-                .addPathPatterns("/professors/**")
-                .excludePathPatterns("/professors/login/**");
+                .addPathPatterns(interceptorPaths);
     }
 }

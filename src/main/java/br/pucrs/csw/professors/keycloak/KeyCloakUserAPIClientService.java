@@ -4,10 +4,7 @@ import br.pucrs.csw.professors.exceptions.InvalidUserOrPasswordLoginException;
 import br.pucrs.csw.professors.exceptions.UnauthorizedOperation;
 import br.pucrs.csw.professors.exceptions.UserNameAlreadyExists;
 import br.pucrs.csw.professors.exceptions.UserNotFoundException;
-import br.pucrs.csw.professors.keycloak.pojo.KeyCloakConfig;
-import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUser;
-import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUserToCreate;
-import br.pucrs.csw.professors.keycloak.pojo.LoginResponse;
+import br.pucrs.csw.professors.keycloak.pojo.*;
 import br.pucrs.csw.professors.pojo.Professor;
 import br.pucrs.csw.professors.security.RequestContext;
 import br.pucrs.csw.professors.web.login.LoginRequest;
@@ -75,31 +72,18 @@ public class KeyCloakUserAPIClientService {
         HttpHeaders httpHeaders = buildAuthHeader();
         HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
         try {
-            ResponseEntity<KeyCloakUser[]> response = restTemplate.exchange(keyCloakConfig.userBaseUrl(),
-                    HttpMethod.GET, entity, KeyCloakUser[].class);
+            ResponseEntity<KeyCloakUsersResponse[]> response = restTemplate.exchange(keyCloakConfig.userBaseUrl(),
+                    HttpMethod.GET, entity, KeyCloakUsersResponse[].class);
             if (response.getBody() == null) return new ArrayList<>();
-            return Arrays.stream(response.getBody()).toList();
+            return Arrays.stream(response.getBody())
+                    .map(KeyCloakUsersResponse::toKeyCloakUser)
+                    .filter(KeyCloakUser::enabled)
+                    .toList();
         } catch (HttpStatusCodeException ex) {
             if (ex.getStatusCode().value() == 403) {
                 throw new UnauthorizedOperation();
             }
             throw ex;
-        }
-    }
-
-    public Optional<KeyCloakUser> getUser(String id) {
-        HttpHeaders httpHeaders = buildAuthHeader();
-        HttpEntity<Void> entity = new HttpEntity<>(httpHeaders);
-        try {
-            ResponseEntity<KeyCloakUser> response = restTemplate.exchange(keyCloakConfig.userBaseUrl() + "/" + id,
-                    HttpMethod.GET, entity, KeyCloakUser.class);
-            return Optional.ofNullable(response.getBody());
-        } catch (HttpStatusCodeException ex) {
-           return switch (ex.getStatusCode().value()) {
-                case 404 -> Optional.empty();
-                case 403 -> throw new UnauthorizedOperation();
-                default -> throw ex;
-            };
         }
     }
 

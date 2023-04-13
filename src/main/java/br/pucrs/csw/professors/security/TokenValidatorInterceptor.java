@@ -50,11 +50,7 @@ public class TokenValidatorInterceptor implements HandlerInterceptor {
             restTemplate.exchange(keyCloakAuthUrl, HttpMethod.GET, entity, String.class);
             return true;
         } catch (HttpClientErrorException ex) {
-            if (ex.getStatusCode().equals(HttpStatusCode.valueOf(401))) {
-                return false;
-            }
             throw new TokenAuthException();
         }
-
     }
 }

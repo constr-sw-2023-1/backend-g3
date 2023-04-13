@@ -3,34 +3,32 @@ package br.pucrs.csw.professors.keycloak.pojo;
 import br.pucrs.csw.professors.pojo.Professor;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public record KeyCloakUser(String id, String username, boolean enabled, boolean emailVerified, String firstName,
-                           String lastName, String email, Map<String, String> attributes) {
+                           String lastName, String email, List<KeyCloakCredential> credentials) {
 
     public Professor toProfessor() {
-        Map<String, String> attr = attributes == null ? new HashMap<>() : attributes;
-        return new Professor(id, username, firstName, lastName, attr.getOrDefault("password", "NOT_SETTED"));
+        return new Professor(id, username, firstName, lastName, credentials.get(0).value());
     }
 
     public KeyCloakUser withEnabled(boolean enabled) {
-        return new KeyCloakUser(id, username, enabled, emailVerified, firstName, lastName, email, attributes);
+        return new KeyCloakUser(id, username, enabled, emailVerified, firstName, lastName, email, credentials);
     }
 
     public KeyCloakUser withFirstName(String firstName) {
         return new KeyCloakUser(id, username, enabled, emailVerified,
-                firstName != null ? firstName : this.firstName, lastName, email, attributes);
+                firstName != null ? firstName : this.firstName, lastName, email, credentials);
     }
 
     public KeyCloakUser withLastName(String lastName) {
         return new KeyCloakUser(id, username, enabled, emailVerified,
-                firstName, lastName != null ? lastName : this.lastName, email, attributes);
+                firstName, lastName != null ? lastName : this.lastName, email, credentials);
     }
 
     public KeyCloakUser withPassword(String password) {
-        if (password != null) {
-            attributes.put("password", password);
-        }
-        return this;
+        return new KeyCloakUser(id, username, enabled, emailVerified,
+                firstName, lastName, email, List.of(credentials.get(0).withNewPass(password)));
     }
 }

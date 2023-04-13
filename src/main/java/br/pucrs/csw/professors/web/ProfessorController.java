@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/professors")
+@RequestMapping("/users")
 public class ProfessorController {
 
     private final ProfessorService professorService;

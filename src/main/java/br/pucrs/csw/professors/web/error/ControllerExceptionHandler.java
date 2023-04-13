@@ -28,6 +28,13 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatusCode.valueOf(403));
     }
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorDetails> handleNotFound(UserNotFoundException ex) {
+        String message = "User with id " + ex.id + " not found in the base";
+        ErrorDetails errorDetails = new ErrorDetails("OA-001", message);
+        return new ResponseEntity<>(errorDetails, HttpStatusCode.valueOf(404));
+    }
+
     @ExceptionHandler(InvalidUserOrPasswordLoginException.class)
     public ResponseEntity<ErrorDetails> invalidUserNameOrPasswordException(InvalidUserOrPasswordLoginException ex) {
         String message = "Invalid username or password";

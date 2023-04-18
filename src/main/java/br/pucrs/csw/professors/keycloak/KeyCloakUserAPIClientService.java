@@ -3,9 +3,8 @@ package br.pucrs.csw.professors.keycloak;
 import br.pucrs.csw.professors.exceptions.InvalidUserOrPasswordLoginException;
 import br.pucrs.csw.professors.exceptions.UnauthorizedOperation;
 import br.pucrs.csw.professors.exceptions.UserNameAlreadyExists;
-import br.pucrs.csw.professors.exceptions.UserNotFoundException;
 import br.pucrs.csw.professors.keycloak.pojo.*;
-import br.pucrs.csw.professors.pojo.Professor;
+import br.pucrs.csw.professors.pojo.User;
 import br.pucrs.csw.professors.security.RequestContext;
 import br.pucrs.csw.professors.web.login.LoginRequest;
 import org.springframework.http.*;
@@ -50,19 +49,19 @@ public class KeyCloakUserAPIClientService {
         }
     }
 
-    public Professor create(Professor professorToCreate) {
-        KeyCloakUserToCreate keyCloakUser = new KeyCloakUserToCreate(professorToCreate);
+    public User create(User userToCreate) {
+        KeyCloakUserToCreate keyCloakUser = new KeyCloakUserToCreate(userToCreate);
         HttpHeaders httpHeaders = buildAuthHeader();
         HttpEntity<KeyCloakUserToCreate> entity = new HttpEntity<>(keyCloakUser, httpHeaders);
         try {
             URI location = restTemplate.postForLocation(keyCloakConfig.userBaseUrl(), entity);
             String[] locationParts = location.getPath().split("/");
             String createdId = locationParts[locationParts.length - 1];
-            return professorToCreate.withId(createdId);
+            return userToCreate.withId(createdId);
         } catch (HttpClientErrorException ex) {
             switch (ex.getStatusCode().value()) {
                 case 403 -> throw new UnauthorizedOperation();
-                case 409 -> throw new UserNameAlreadyExists(professorToCreate.username());
+                case 409 -> throw new UserNameAlreadyExists(userToCreate.username());
                 default -> throw ex;
             }
         }

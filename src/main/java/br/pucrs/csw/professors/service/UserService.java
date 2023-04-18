@@ -4,34 +4,34 @@ import br.pucrs.csw.professors.exceptions.UserNotFoundException;
 import br.pucrs.csw.professors.keycloak.KeyCloakUserAPIClientService;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakUser;
 import br.pucrs.csw.professors.pojo.PasswordUpdate;
-import br.pucrs.csw.professors.pojo.Professor;
-import br.pucrs.csw.professors.web.input.ProfessorInput;
+import br.pucrs.csw.professors.pojo.User;
+import br.pucrs.csw.professors.web.input.UserUpdate;
 
 import java.util.List;
 import java.util.Optional;
 
-public class ProfessorService {
+public class UserService {
 
     private KeyCloakUserAPIClientService keyCloakUserAPIClientService;
 
-    public ProfessorService(KeyCloakUserAPIClientService keyCloakUserAPIClientService) {
+    public UserService(KeyCloakUserAPIClientService keyCloakUserAPIClientService) {
         this.keyCloakUserAPIClientService = keyCloakUserAPIClientService;
     }
 
-    public Professor create(Professor toCreate) {
+    public User create(User toCreate) {
         return keyCloakUserAPIClientService.create(toCreate);
     }
 
-    public List<Professor> getAll() {
+    public List<User> getAll() {
         List<KeyCloakUser> users = keyCloakUserAPIClientService.getAll();
         return users.stream()
-                .map(KeyCloakUser::toProfessor)
+                .map(KeyCloakUser::toUser)
                 .toList();
     }
 
-    public Professor getUserById(String id) {
+    public User getUserById(String id) {
         return this.getById(id)
-                .map(KeyCloakUser::toProfessor)
+                .map(KeyCloakUser::toUser)
                 .orElseThrow(() -> new UserNotFoundException(id));
     }
 
@@ -41,21 +41,21 @@ public class ProfessorService {
         keyCloakUserAPIClientService.update(id, user.withEnabled(false));
     }
 
-    public Professor updateUserById(String id, ProfessorInput newUserData) {
+    public User updateUserById(String id, UserUpdate newUserData) {
         KeyCloakUser user = this.getById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         user = user.withFirstName(newUserData.firstName())
                 .withLastName(newUserData.lastName());
         keyCloakUserAPIClientService.update(id, user);
-        return user.toProfessor();
+        return user.toUser();
     }
 
-    public Professor updatePassword(String id, PasswordUpdate passwordUpdate) {
+    public User updatePassword(String id, PasswordUpdate passwordUpdate) {
         KeyCloakUser user = this.getById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         user = user.withPassword(passwordUpdate.newPassword());
         keyCloakUserAPIClientService.update(id, user);
-        return user.toProfessor();
+        return user.toUser();
     }
 
     private Optional<KeyCloakUser> getById(String id) {

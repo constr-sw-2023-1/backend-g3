@@ -1,16 +1,14 @@
 package br.pucrs.csw.professors.keycloak.pojo;
 
-import br.pucrs.csw.professors.pojo.Professor;
+import br.pucrs.csw.professors.pojo.User;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public record KeyCloakUser(String id, String username, boolean enabled, boolean emailVerified, String firstName,
                            String lastName, String email, List<KeyCloakCredential> credentials) {
 
-    public Professor toProfessor() {
-        return new Professor(id, username, firstName, lastName, credentials.get(0).value());
+    public User toUser() {
+        return new User(id, username, firstName, lastName, credentials.get(0).value());
     }
 
     public KeyCloakUser withEnabled(boolean enabled) {

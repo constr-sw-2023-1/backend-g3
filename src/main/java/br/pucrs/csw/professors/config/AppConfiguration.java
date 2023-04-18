@@ -2,8 +2,8 @@ package br.pucrs.csw.professors.config;
 
 import br.pucrs.csw.professors.keycloak.KeyCloakUserAPIClientService;
 import br.pucrs.csw.professors.keycloak.pojo.KeyCloakConfig;
-import br.pucrs.csw.professors.service.ProfessorService;
-import br.pucrs.csw.professors.web.ProfessorController;
+import br.pucrs.csw.professors.service.UserService;
+import br.pucrs.csw.professors.web.UserController;
 import br.pucrs.csw.professors.web.error.ControllerExceptionHandler;
 import br.pucrs.csw.professors.web.login.LoginController;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,13 +38,13 @@ public class AppConfiguration {
     }
 
     @Bean
-    public ProfessorController professorController(ProfessorService professorService) {
-        return new ProfessorController(professorService);
+    public UserController userController(UserService userService) {
+        return new UserController(userService);
     }
 
     @Bean
-    public ProfessorService professorService(KeyCloakUserAPIClientService keyCloakUserAPIClientService) {
-        return new ProfessorService(keyCloakUserAPIClientService);
+    public UserService userService(KeyCloakUserAPIClientService keyCloakUserAPIClientService) {
+        return new UserService(keyCloakUserAPIClientService);
     }
 
     @Bean

@@ -20,16 +20,16 @@ services:
      - KEYCLOAK_FRONTEND_URL=http://localhost:8090/auth
    networks:
      - grupo3
-# app:
-#  container_name: app_backend_g3
-#  build: .
-#  environment:
-#   - KEYCLOAK_AUTH_VALIDATOR_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/userinfo
-#   - KEYCLOAK_AUTH_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/token
-#   - KEYCLOAK_USER_URL=http://keycloak:8080/auth/admin/realms/csw/users
-#  ports:
-#    - 8080:8080
-#  networks:
-#    - grupo3
-#  depends_on:
-#    - keycloak
+ app:
+  container_name: app_backend_g3
+  build: .
+  environment:
+   - KEYCLOAK_AUTH_VALIDATOR_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/userinfo
+   - KEYCLOAK_AUTH_URL=http://keycloak:8080/auth/realms/csw/protocol/openid-connect/token
+   - KEYCLOAK_USER_URL=http://keycloak:8080/auth/admin/realms/csw/users
+  ports:
+    - 8080:8080
+  networks:
+    - grupo3
+  depends_on:
+    - keycloak

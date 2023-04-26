@@ -1,0 +1,36 @@
+{
+    "professor" : {
+        "id": "UUID",
+        "matricula": "string",
+        "nome": "string",
+        "dataNascimento": "date|string",
+        "certificacoes": ["UUID(lookup->certificacao)"],
+	    "disciplinasMinistradas": ["UUID(lookup->disciplina)"],
+        "cursos": ["UUID(lookup->curso)"],
+        "dataAdmissao": "data",
+        "ativo": "boolean",
+        "identificacao": [{
+            "tipo": "string",
+            "valor": "string"
+        }]
+    },
+
+    "curso": {
+        "id": "UUID",
+        "nome": "string"
+    },
+
+    "certificacao": {
+        "id": "UUID",
+        "ano": "int",
+        "nivel": "string",
+        "descricao": "string"
+    },
+
+    "disciplina": {
+        "id": "UUID",
+        "codCred": "string",
+        "nivel": "string",
+        "nomeDisciplina": "string"
+    }
+}

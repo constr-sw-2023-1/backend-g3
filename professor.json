@@ -5,8 +5,7 @@
         "nome": "string",
         "dataNascimento": "date|string",
         "certificacoes": ["UUID(lookup->certificacao)"],
-	    "disciplinasMinistradas": ["UUID(lookup->disciplina)"],
-        "cursos": ["UUID(lookup->curso)"],
+        "curso": "UUID(lookup->curso)",
         "dataAdmissao": "data",
         "ativo": "boolean",
         "identificacao": [{
@@ -25,12 +24,5 @@
         "ano": "int",
         "nivel": "string",
         "descricao": "string"
-    },
-
-    "disciplina": {
-        "id": "UUID",
-        "codCred": "string",
-        "nivel": "string",
-        "nomeDisciplina": "string"
     }
 }

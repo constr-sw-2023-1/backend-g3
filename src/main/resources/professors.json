@@ -1,0 +1,28 @@
+{
+    "professor" : {
+        "id": "UUID",
+        "registration": "string",
+        "name": "string",
+        "bornDate": "date|string",
+        "certification": ["UUID(lookup->certification)"],
+        "course": "UUID(lookup->course)",
+        "admissionDate": "date",
+        "active": "boolean",
+        "identification": [{
+            "type": "string",
+            "value": "string"
+        }]
+    },
+
+    "course": {
+        "id": "UUID",
+        "name": "string"
+    },
+
+    "certification": {
+        "id": "UUID",
+        "year": "int",
+        "level": "string",
+        "description": "string"
+    }
+}

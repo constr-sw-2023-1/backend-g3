@@ -37,57 +37,5 @@ public class IdentificationsRepository {
             return new ArrayList<>();
         }
     }
-
-    public void updateProfessor(ProfessorEntity professor) {
-        try {
-            log.debug("Try to update professor: " + professor.getId());
-            String sql = """
-                    UPDATE %s
-                    SET registration = :registration,
-                        name = :name,
-                        born_date = :bornDate,
-                        admission_date = :admissionDate,
-                        active = :active
-                    WHERE id = :id
-                    """;
-            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                    .addValue("id", professor.getId())
-                    .addValue("registration", professor.getRegistration())
-                    .addValue("name", professor.getName())
-                    .addValue("bornDate", professor.getBornDate())
-                    .addValue("admissionDate", professor.getAdmissionDate())
-                    .addValue("active", professor.isActive());
-    
-            jdbcTemplate.update(sql, mapSqlParameterSource);
-    
-            // Atualizar as identificações
-            updateIdentifications(professor.getId(), professor.getIdentification());
-    
-        } catch (DataAccessException ex) {
-            log.error("Error trying to update professor: " + professor.getId(), ex);
-            throw new RuntimeException("Failed to update professor");
-        }
-    }
-    
-    private void updateIdentifications(UUID professorId, List<IdentificationEntity> identifications) {
-        try {
-            log.debug("Try to update identifications of professor: " + professorId);
-            String deleteSql = "DELETE FROM %s WHERE professor_id = :professor_id";
-            String insertSql = "INSERT INTO %s (professor_id, type, value) VALUES (:professor_id, :type, :value)";
-    
-            MapSqlParameterSource deleteParams = new MapSqlParameterSource("professor_id", professorId);
-            jdbcTemplate.update(String.format(deleteSql, TABLE_NAME), deleteParams);
-    
-            for (IdentificationEntity identification : identifications) {
-                MapSqlParameterSource insertParams = new MapSqlParameterSource()
-                        .addValue("professor_id", professorId)
-                        .addValue("type", identification.getType())
-                        .addValue("value", identification.getValue());
-                jdbcTemplate.update(String.format(insertSql, TABLE_NAME), insertParams);
-            }
-        } catch (DataAccessException ex) {
-            log.error("Error trying to update identifications of professor: " + professorId, ex);
-            throw new RuntimeException("Failed to update identifications");
-        }
-    }
+}
     

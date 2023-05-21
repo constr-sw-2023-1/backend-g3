@@ -20,7 +20,7 @@ create table if not exists professors.certification (
     professor_id uuid not null,
     constraint certification_professor_fk foreign key (professor_id)
         references professors.professor (id)
-)
+);
 create index if not exists certification_professor_id_idx on professors.certification using btree(professor_id);
 
 create table if not exists professors.identification (

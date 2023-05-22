@@ -1,6 +1,6 @@
 package br.csw.opensarc.professors.repository.mapper;
 
-import br.csw.opensarc.professors.repository.dto.IdentificationEntity;
+import br.csw.opensarc.professors.repository.entity.IdentificationEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;

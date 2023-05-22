@@ -23,30 +23,32 @@ public class CertificationController {
     @PostMapping
     public ResponseEntity<Certification> createCertification(@PathVariable("professorId") String professorId,
                                                              @Valid @RequestBody CertificationInput certificationInput) {
-        return ResponseEntity.of(Optional.empty());
+        return ResponseEntity.of(certificationService.createCertification(professorId, certificationInput));
     }
 
     @GetMapping
     public ResponseEntity<List<Certification>> getAllOfProfessor(@PathVariable("professorId") String professorId) {
-        return ResponseEntity.notFound().build();
+        List<Certification> certifications = certificationService.getAllByProfessor(professorId);
+        return certifications.isEmpty() ? ResponseEntity.ok(certifications) : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Certification> getById(@PathVariable("professorId") String professorId,
                                                  @PathVariable("id") String id) {
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.of(certificationService.getById(professorId, id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Certification> deleteCertification(@PathVariable("professorId") String professorId,
-                                                             @PathVariable("id") String id) {
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteCertification(@PathVariable("professorId") String professorId,
+                                                    @PathVariable("id") String id) {
+        boolean deleted = certificationService.delete(id, professorId);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Certification> editCertification(@PathVariable("professorId") String professorId,
                                                            @PathVariable("id") String id,
                                                            @Valid @RequestBody CertificationInput certificationInput) {
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.of(certificationService.updateCertification(id, professorId, certificationInput));
     }
 }

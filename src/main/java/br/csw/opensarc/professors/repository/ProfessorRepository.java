@@ -48,7 +48,7 @@ public class ProfessorRepository {
                     .addValue("admissionDate", professor.getAdmissionDate())
                     .addValue("active", professor.isActive());
     
-            jdbcTemplate.queryForObject(sql, mapSqlParameterSource); //Atribuir a um objeto professor entity
+            ProfessorEntity professor = (jdbcTemplate.queryForObject(sql, mapSqlParameterSource), professorRowMapper);
     
             // Atualizar as identificações
             updateIdentifications(professor.getId(), professor.getIdentification()); //Atribuir a lista de identifications

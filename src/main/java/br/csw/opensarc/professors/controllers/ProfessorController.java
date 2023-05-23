@@ -19,7 +19,7 @@ public class ProfessorController {
                             schema = @Schema(implementation = Error.class)))
     })
     
-    public ResponseEntity<ProfessorEntity> updateProfessor(@PathVariable String id, @RequestBody ProfessorEntity professorData) {
+    public ResponseEntity<ProfessorEntity> updateProfessor(@PathVariable("id") String id, @RequestBody ProfessorInput professorData) {
         try {
             ProfessorEntity updatedProfessor = professorService.updateProfessor(id, professorData);
             return ResponseEntity.ok(updatedProfessor);

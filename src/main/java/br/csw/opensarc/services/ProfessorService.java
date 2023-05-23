@@ -11,11 +11,12 @@ public class ProfessorService {
         ProfessorEntity professor = professorRepository.findById(id);
 
         if (professor == null) {
-            optional.empty();
+            return Optional.empty();
         }
 
         professorRepository.update(id, professorData);
 
-        return Optional.of(o update())
+        //return Optional.of(professorRepo.update(id, professorInput).toProfessor() não entendi oq quis dizer
+        return Optional.of(professor);
     }
 }

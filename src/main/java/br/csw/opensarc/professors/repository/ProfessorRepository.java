@@ -27,10 +27,10 @@ public class ProfessorRepository {
 
 
     @Transactional
-    public void updateProfessor(ProfessorEntity professor) {
+    public Optional<ProfessorEntity> updateProfessor(ProfessorEntity professor) {
         try {
             log.debug("Try to update professor: " + professor.getId());
-            String sql = """
+            String sql = String.format("""
                     UPDATE %s
                     SET registration = :registration,
                         name = :name,
@@ -39,7 +39,7 @@ public class ProfessorRepository {
                         active = :active
                     WHERE id = :id
                     returning *
-                    """;
+                    """, TABLE_NAME);
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                     .addValue("id", professor.getId())
                     .addValue("registration", professor.getRegistration())
@@ -48,15 +48,17 @@ public class ProfessorRepository {
                     .addValue("admissionDate", professor.getAdmissionDate())
                     .addValue("active", professor.isActive());
     
-            ProfessorEntity professor = (jdbcTemplate.queryForObject(sql, mapSqlParameterSource), professorRowMapper);
+            ProfessorEntity updatedProfessor = (jdbcTemplate.queryForObject(sql, mapSqlParameterSource), professorRowMapper);
     
             // Atualizar as identificações
             updateIdentifications(professor.getId(), professor.getIdentification()); //Atribuir a lista de identifications
             //return professor.withIdentification(identifications);
+            return Optional.ofNullable(updatedProfessor);
         } catch (DataAccessException ex) {
             log.error("Error trying to update professor: " + professor.getId(), ex);
-            throw new RuntimeException("Failed to update professor");
+            return Optional.empty();
         }
+    
     }
     
     private List<IdentificationEntity> updateIdentifications(String professorId, List<IdentificationEntity> identifications) {
@@ -69,20 +71,21 @@ public class ProfessorRepository {
             jdbcTemplate.update(String.format(deleteSql, TABLE_NAME), deleteParams);
     
 
-            List<IdentificationEntity> identifications = new ArrayList<>();
+            List<IdentificationEntity> updatedIdentifications = new ArrayList<>();
 
             for (IdentificationEntity identification : identifications) {
                 MapSqlParameterSource insertParams = new MapSqlParameterSource()
                         .addValue("professor_id", professorId)
                         .addValue("type", identification.getType())
                         .addValue("value", identification.getValue());
-                identifications.add(jdbcTemplate.queryForObject(String.format(insertSql, TABLE_NAME), insertParams, identificationRowMapper));
+                updatedIdentifications.add(jdbcTemplate.queryForObject(String.format(insertSql, TABLE_NAME), insertParams, identificationRowMapper));
             }
-            return identification;
+            return updatedIdentifications;
 
         } catch (DataAccessException ex) {
             log.error("Error trying to update identifications of professor: " + professorId, ex);
-            throw new RuntimeException("Failed to update identifications");
+            return new ArrayList<>();
+            //throw new RuntimeException("Failed to update identifications");
         }
     }
 }

@@ -8,13 +8,11 @@ public class ProfessorService {
     }
 
     public ProfessorEntity updateProfessor(String id, ProfessorEntity professorData) {
-        ProfessorEntity professor = professorRepository.findById(id);
+        ProfessorEntity professor = professorRepository.updateProfessor(id, professorData);
 
         if (professor == null) {
             return Optional.empty();
         }
-
-        professorRepository.update(id, professorData);
 
         //return Optional.of(professorRepo.update(id, professorInput).toProfessor() não entendi oq quis dizer
         return Optional.of(professor);

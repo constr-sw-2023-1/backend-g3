@@ -50,10 +50,9 @@ public class ProfessorRepository {
     
             ProfessorEntity updatedProfessor = (jdbcTemplate.queryForObject(sql, mapSqlParameterSource), professorRowMapper);
     
-            // Atualizar as identificações
-            updateIdentifications(professor.getId(), professor.getIdentification()); //Atribuir a lista de identifications
-            //return professor.withIdentification(identifications);
-            return Optional.ofNullable(updatedProfessor);
+            List<IdentificationEntity> updatedIdentifications = updateIdentifications(professor.getId(), professor.getIdentification());
+            return Optional.of(professor.withIdentification(updateIdentifications);
+
         } catch (DataAccessException ex) {
             log.error("Error trying to update professor: " + professor.getId(), ex);
             return Optional.empty();
@@ -85,7 +84,6 @@ public class ProfessorRepository {
         } catch (DataAccessException ex) {
             log.error("Error trying to update identifications of professor: " + professorId, ex);
             return new ArrayList<>();
-            //throw new RuntimeException("Failed to update identifications");
         }
     }
 }

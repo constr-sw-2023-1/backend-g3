@@ -2,16 +2,17 @@ package br.csw.opensarc.professors.repository.entity;
 
 import br.csw.opensarc.professors.model.Certification;
 
-public record CertificationEntity(String id, String professorId, int year, String level, String description) {
+public record CertificationEntity(String id, String name, String level, String institution) {
 
-    public CertificationEntity(String professorId, int year, String level, String description) {
-        this(null, professorId, year, level, description);
+    public CertificationEntity(String name, String level, String institution) {
+        this(null, name, level, institution);
     }
+
     public CertificationEntity withId(String id) {
-        return new CertificationEntity(id, this.professorId, this.year, this.level, this.description);
+        return new CertificationEntity(id, name, level, institution);
     }
 
     public Certification toCertification() {
-        return new Certification(id, year, level, description);
+        return new Certification(id, name, level, institution);
     }
 }

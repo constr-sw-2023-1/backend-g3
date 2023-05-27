@@ -6,11 +6,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record CertificationInput(
-        @Min(value = 1920, message = "Year should be at least 1920") int year,
+        @NotBlank(message = "Name is required") String name,
         @NotBlank(message = "Level is required") String level,
-        @NotBlank(message = "Description is required") String description) {
+        @NotBlank(message = "Description is required") String institution) {
 
-    public CertificationEntity toEntity(String professorId) {
-        return new CertificationEntity(professorId, year, level, description);
+    public CertificationEntity toEntity() {
+        return new CertificationEntity(name, level, institution);
     }
 }

@@ -10,11 +10,9 @@ public class CertificationRowMapper implements RowMapper<CertificationEntity> {
     @Override
     public CertificationEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
         String id = rs.getString("id");
-        int year = rs.getInt("year");
+        String name = rs.getString("name");
         String level = rs.getString("level");
-        String description = rs.getString("description");
-        String professorId = rs.getString("professor_id");
-
-        return new CertificationEntity(id, professorId, year, level, description);
+        String institution = rs.getString("institution");
+        return new CertificationEntity(id, name, level, institution);
     }
 }

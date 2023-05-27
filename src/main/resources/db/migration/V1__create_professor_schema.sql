@@ -14,14 +14,21 @@ create index if not exists registration_idx on professors.professor using btree 
 
 create table if not exists professors.certification (
     id uuid not null DEFAULT uuid_generate_v4() primary key,
-    "year" date not null default now(),
     "level" text not null,
-    description text not null,
-    professor_id uuid not null,
-    constraint certification_professor_fk foreign key (professor_id)
-        references professors.professor (id)
+    "name" text not null,
+    institution text not null
 );
-create index if not exists certification_professor_id_idx on professors.certification using btree(professor_id);
+
+create table if not exists professors.professors_certifications (
+    id uuid not null DEFAULT uuid_generate_v4() primary key,
+    certification_id uuid not null,
+    professor_id uuid not null,
+    "year" date not null default now(),
+    "semester" boolean not null,
+    description text not null
+);
+create index if not exists professors_certifications_idx on professors.professors_certifications using btree (certification_id, professor_id);
+create index if not exists professors_certifications_professor_idx on professors.professors_certifications using btree (professor_id);
 
 create table if not exists professors.identification (
     id uuid not null default uuid_generate_v4(),

@@ -2,7 +2,7 @@ package br.csw.opensarc.professors.config;
 
 import br.csw.opensarc.professors.controller.CertificationController;
 import br.csw.opensarc.professors.repository.CertificationRepository;
-import br.csw.opensarc.professors.service.CertificationService;
+import br.csw.opensarc.professors.service.CertificationProfessorService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -11,13 +11,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 public class ProfessorsConfig {
 
     @Bean
-    public CertificationController certificationController(CertificationService certificationService) {
-        return new CertificationController(certificationService);
+    public CertificationController certificationController(CertificationProfessorService certificationProfessorService) {
+        return new CertificationController(certificationProfessorService);
     }
 
     @Bean
-    public CertificationService certificationService(CertificationRepository certificationRepository) {
-        return new CertificationService(certificationRepository);
+    public CertificationProfessorService certificationService(CertificationRepository certificationRepository) {
+        return new CertificationProfessorService(certificationRepository);
     }
 
     @Bean

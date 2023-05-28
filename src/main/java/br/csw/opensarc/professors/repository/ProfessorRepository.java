@@ -71,4 +71,17 @@ public class ProfessorRepository {
             return Optional.empty();
         }
     }
+
+    public List<ProfessorEntity> getAll() {
+        try {
+            String sql = """
+                        select id, registration, name, born_date, admission_date, active
+                        from %s
+                    """;
+
+            return jdbcTemplate.query(String.format(sql, TABLE_NAME), professorRowMapper);
+        } catch (DataAccessException ex) {
+            return new ArrayList<>();
+        }
+    }
 }

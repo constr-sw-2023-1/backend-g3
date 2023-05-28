@@ -33,8 +33,10 @@ public class ProfessorsConfig {
     }
 
     @Bean
-    public ProfessorService professorService(ProfessorRepository professorRepository, IdentificationsRepository identificationsRepository) {
-        return new ProfessorService(professorRepository, identificationsRepository);
+    public ProfessorService professorService(ProfessorRepository professorRepository,
+                                             IdentificationsRepository identificationsRepository,
+                                             ProfessorCertificationRepository professorCertificationRepository) {
+        return new ProfessorService(professorRepository, identificationsRepository, professorCertificationRepository);
     }
 
     @Bean

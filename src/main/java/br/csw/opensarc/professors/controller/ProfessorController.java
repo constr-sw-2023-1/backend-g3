@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,4 +39,19 @@ public class ProfessorController {
         return updatedProfessor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
+
+    @GetMapping
+    public ResponseEntity<List<Professor>> getAll() {
+        return ResponseEntity.ok(professorService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Professor> getAll(@PathVariable("id") String id) {
+        return ResponseEntity.of(professorService.getById(id));
+    }
+
+//    @PostMapping
+//    public ResponseEntity<SimpleProfessor> createProfessor(@Valid @RequestBody ProfessorInput createProfessor) {
+//
+//    }
 }

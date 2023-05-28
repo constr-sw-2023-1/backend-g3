@@ -84,5 +84,11 @@ public class IdentificationsRepository {
             return new ArrayList<>();
         }
     }
+
+    public void deleteAllForProfessor(String id) {
+        String deleteSql = "DELETE FROM %s WHERE professor_id = :professor_id";
+        MapSqlParameterSource deleteParams = new MapSqlParameterSource("professor_id", id);
+        jdbcTemplate.update(String.format(deleteSql, TABLE_NAME), deleteParams);
+    }
 }
     

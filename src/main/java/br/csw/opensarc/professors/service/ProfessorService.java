@@ -10,9 +10,12 @@ import br.csw.opensarc.professors.repository.ProfessorRepository;
 import br.csw.opensarc.professors.repository.entity.IdentificationEntity;
 import br.csw.opensarc.professors.repository.entity.ProfessorCertificationEntity;
 import br.csw.opensarc.professors.repository.entity.ProfessorEntity;
+import br.csw.opensarc.professors.service.dto.SearchFilters;
+import br.csw.opensarc.professors.service.dto.SearchType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class ProfessorService {
@@ -43,8 +46,9 @@ public class ProfessorService {
         );
     }
 
-    public List<Professor> getAll() {
-        List<ProfessorEntity> entities = professorRepository.getAll();
+    public List<Professor> getAll(Map<String, String> filters) {
+        List<SearchFilters> searchFilters = generateFilters(filters);
+        List<ProfessorEntity> entities = professorRepository.getAll(searchFilters);
         return entities.stream()
                 .map(it -> {
                     List<IdentificationEntity> identificationEntities = identificationsRepository.getByProfessorId(it.id());
@@ -71,5 +75,33 @@ public class ProfessorService {
         ProfessorEntity entity = professorRepository.create(createProfessor.toProfessorEntity());
         List<IdentificationEntity> insertedIdentifications = identificationsRepository.createBatch(entity.id(), identification);
         return entity.toSimpleProfessor(insertedIdentifications.stream().map(IdentificationEntity::toIdentification).toList());
+    }
+
+    @Transactional
+    public boolean delete(String id) {
+        return professorRepository.getById(id)
+                .map(it -> {
+                    identificationsRepository.deleteAllForProfessor(id);
+                    professorCertificationRepository.deleteAllForProfessor(id);
+                    professorRepository.delete(id);
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    private List<SearchFilters> generateFilters(Map<String, String> filters) {
+        List<String> filterTypesId = SearchType.allIds();
+        return filters.entrySet()
+                .stream()
+                .map(it -> {
+                    String valueWithId = it.getValue();
+                    SearchType searchType = filterTypesId.stream()
+                            .filter(valueWithId::startsWith)
+                            .findFirst()
+                            .flatMap(SearchType::ofType)
+                            .orElse(SearchType.EQUAL);
+                    String value = valueWithId.replace(searchType.getId(), "");
+                    return new SearchFilters(it.getKey(), value, searchType);
+                }).toList();
     }
 }

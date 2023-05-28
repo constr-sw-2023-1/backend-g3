@@ -107,4 +107,14 @@ public class ProfessorCertificationRepository {
             throw new InsertError(ex.getMessage());
         }
     }
+
+    public void deleteAllForProfessor(String id) {
+        String sql = """
+                    DELETE FROM professors.professors_certifications
+                    where professor_id = :professor_id
+                """;
+
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", id)
+        jdbcTemplate.update(sql, mapSqlParameterSource);
+    }
 }

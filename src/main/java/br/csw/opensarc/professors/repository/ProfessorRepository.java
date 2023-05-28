@@ -2,9 +2,8 @@ package br.csw.opensarc.professors.repository;
 
 import br.csw.opensarc.professors.repository.entity.ProfessorEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorRowMapper;
+import br.csw.opensarc.professors.service.dto.SearchFilters;
 import br.csw.opensarc.professors.service.exception.InsertError;
-import org.springframework.transaction.annotation.Transactional;
-import br.csw.opensarc.professors.repository.mapper.ProfessorIdentificationRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProfessorRepository {
-    private static final String TABLE_NAME = "professors.identification";
+    private static final String TABLE_NAME = "professors.professor";
     private static final Logger log = LoggerFactory.getLogger(IdentificationsRepository.class);
     private final NamedParameterJdbcTemplate jdbcTemplate;
     private final ProfessorRowMapper professorRowMapper;
@@ -74,17 +73,27 @@ public class ProfessorRepository {
         }
     }
 
-    public List<ProfessorEntity> getAll() {
+    public List<ProfessorEntity> getAll(List<SearchFilters> searchFilters) {
         try {
-            String sql = """
+            StringBuilder sql = new StringBuilder("""
                         select id, registration, name, born_date, admission_date, active
                         from %s
-                    """;
+                        WHERE 1 = 1
+                    """);
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
+            for (SearchFilters it : searchFilters) {
+                sql.append(String.format("\nAND %s %s %s", toSnake(it.field()), it.type().getOperator(), ":" + it.field()));
+                mapSqlParameterSource.addValue(":" + it.field(), it.value());
+            }
 
-            return jdbcTemplate.query(String.format(sql, TABLE_NAME), professorRowMapper);
+            return jdbcTemplate.query(String.format(sql.toString(), TABLE_NAME), professorRowMapper);
         } catch (DataAccessException ex) {
             return new ArrayList<>();
         }
+    }
+
+    private String toSnake(String field) {
+        return field.replace("([A-Z][a-z]+)", "$1_").toLowerCase();
     }
 
     public ProfessorEntity create(ProfessorEntity professorEntity) {
@@ -104,5 +113,14 @@ public class ProfessorRepository {
         } catch (DataAccessException ex) {
             throw new InsertError(ex.getMessage());
         }
+    }
+
+    public void delete(String id) {
+        String sql = """
+                    DELETE FROM %s
+                    where id = :id
+                """;
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("id", id);
+        jdbcTemplate.update(String.format(sql, TABLE_NAME), mapSqlParameterSource);
     }
 }

@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -45,8 +46,8 @@ public class ProfessorController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Professor>> getAll() {
-        return ResponseEntity.ok(professorService.getAll());
+    public ResponseEntity<List<Professor>> getAll(@RequestParam(required = false) Map<String, String> filters) {
+        return ResponseEntity.ok(professorService.getAll(filters));
     }
 
     @GetMapping("/{id}")
@@ -57,6 +58,12 @@ public class ProfessorController {
     @PostMapping
     public ResponseEntity<SimpleProfessor> createProfessor(@Valid @RequestBody ProfessorInput createProfessor) {
         return new ResponseEntity<>(professorService.create(createProfessor), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteProfessor(@PathVariable("id") String id) {
+        boolean deleted = professorService.delete(id);
+        return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
     }
 
     @ExceptionHandler(InsertError.class)

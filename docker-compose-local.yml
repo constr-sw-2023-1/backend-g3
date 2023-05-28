@@ -1,0 +1,15 @@
+version: '3'
+networks: 
+  grupo3: 
+services:
+  professors-db:
+    networks:
+     - grupo3
+    image: "postgres:12.3"
+    ports:
+      - "5432:5432"
+    volumes:
+      - "/tmp/pgdata-test:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=csw

@@ -1,6 +1,10 @@
 version: '3'
+networks: 
+  grupo3: 
 services:
-  postgresql:
+  professors-db:
+    networks:
+     - grupo3
     image: "postgres:12.3"
     ports:
       - "5432:5432"
@@ -9,3 +13,14 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=csw
+  
+  professors-app:
+    networks:
+      - grupo3
+    image: .
+    ports:
+      - "8083:8083"
+    depends_on:
+      - professors-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://grupo3:5432/csw?user=postgres&password=postgres

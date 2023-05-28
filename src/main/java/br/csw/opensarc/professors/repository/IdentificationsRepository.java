@@ -1,6 +1,6 @@
 package br.csw.opensarc.professors.repository;
 
-import br.csw.opensarc.professors.repository.dto.IdentificationEntity;
+import br.csw.opensarc.professors.repository.entity.IdentificationEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorIdentificationRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,7 +1,8 @@
 package br.csw.opensarc.professors.repository;
 
+import br.csw.opensarc.professors.repository.entity.ProfessorEntity;
+import br.csw.opensarc.professors.repository.mapper.ProfessorRowMapper;
 import org.springframework.transaction.annotation.Transactional;
-import br.csw.opensarc.professors.repository.dto.IdentificationEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorIdentificationRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,25 +12,22 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProfessorRepository {
     private static final String TABLE_NAME = "professors.identification";
     private static final Logger log = LoggerFactory.getLogger(IdentificationsRepository.class);
     private final NamedParameterJdbcTemplate jdbcTemplate;
-    private final ProfessorIdentificationRowMapper identificationRowMapper;
     private final ProfessorRowMapper professorRowMapper;
 
     public ProfessorRepository(NamedParameterJdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        identificationRowMapper = new ProfessorIdentificationRowMapper();
         professorRowMapper = new ProfessorRowMapper();
     }
 
-
-    @Transactional
-    public Optional<ProfessorEntity> updateProfessor(ProfessorEntity professor) {
+    public Optional<ProfessorEntity> updateProfessor(String professorId, ProfessorEntity professor) {
         try {
-            log.debug("Try to update professor: " + professor.getId());
+            log.debug("Try to update professor: " + professorId);
             String sql = String.format("""
                     UPDATE %s
                     SET registration = :registration,
@@ -38,52 +36,23 @@ public class ProfessorRepository {
                         admission_date = :admissionDate,
                         active = :active
                     WHERE id = :id
-                    returning *
+                    returning id, registration, name, born_date, admission_date, active
                     """, TABLE_NAME);
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                    .addValue("id", professor.getId())
-                    .addValue("registration", professor.getRegistration())
-                    .addValue("name", professor.getName())
-                    .addValue("bornDate", professor.getBornDate())
-                    .addValue("admissionDate", professor.getAdmissionDate())
-                    .addValue("active", professor.isActive());
-    
-            ProfessorEntity updatedProfessor = (jdbcTemplate.queryForObject(sql, mapSqlParameterSource), professorRowMapper);
-    
-            List<IdentificationEntity> updatedIdentifications = updateIdentifications(professor.getId(), professor.getIdentification());
-            return Optional.of(professor.withIdentification(updateIdentifications);
+                    .addValue("id", professorId)
+                    .addValue("registration", professor.registration())
+                    .addValue("name", professor.name())
+                    .addValue("bornDate", professor.bornDate())
+                    .addValue("admissionDate", professor.admissionDate())
+                    .addValue("active", professor.active());
 
+            ProfessorEntity updatedProfessor = jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME),
+                    mapSqlParameterSource, professorRowMapper);
+
+            return Optional.ofNullable(updatedProfessor);
         } catch (DataAccessException ex) {
-            log.error("Error trying to update professor: " + professor.getId(), ex);
+            log.error("Error trying to update professor: " + professorId, ex);
             return Optional.empty();
-        }
-    
-    }
-    
-    private List<IdentificationEntity> updateIdentifications(String professorId, List<IdentificationEntity> identifications) {
-        try {
-            log.debug("Try to update identifications of professor: " + professorId);
-            String deleteSql = "DELETE FROM %s WHERE professor_id = :professor_id";
-            String insertSql = "INSERT INTO %s (professor_id, type, value) VALUES (:professor_id, :type, :value) returning *";
-    
-            MapSqlParameterSource deleteParams = new MapSqlParameterSource("professor_id", professorId);
-            jdbcTemplate.update(String.format(deleteSql, TABLE_NAME), deleteParams);
-    
-
-            List<IdentificationEntity> updatedIdentifications = new ArrayList<>();
-
-            for (IdentificationEntity identification : identifications) {
-                MapSqlParameterSource insertParams = new MapSqlParameterSource()
-                        .addValue("professor_id", professorId)
-                        .addValue("type", identification.getType())
-                        .addValue("value", identification.getValue());
-                updatedIdentifications.add(jdbcTemplate.queryForObject(String.format(insertSql, TABLE_NAME), insertParams, identificationRowMapper));
-            }
-            return updatedIdentifications;
-
-        } catch (DataAccessException ex) {
-            log.error("Error trying to update identifications of professor: " + professorId, ex);
-            return new ArrayList<>();
         }
     }
 }

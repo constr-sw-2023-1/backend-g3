@@ -37,5 +37,32 @@ public class IdentificationsRepository {
             return new ArrayList<>();
         }
     }
+
+    public List<IdentificationEntity> updateIdentifications(String professorId, List<IdentificationEntity> identifications) {
+        try {
+            log.debug("Try to update identifications of professor: " + professorId);
+            String deleteSql = "DELETE FROM %s WHERE professor_id = :professor_id";
+            String insertSql = "INSERT INTO %s (professor_id, type, value) VALUES (:professor_id, :type, :value) returning *";
+
+            MapSqlParameterSource deleteParams = new MapSqlParameterSource("professor_id", professorId);
+            jdbcTemplate.update(String.format(deleteSql, TABLE_NAME), deleteParams);
+
+
+            List<IdentificationEntity> updatedIdentifications = new ArrayList<>();
+
+            for (IdentificationEntity identification : identifications) {
+                MapSqlParameterSource insertParams = new MapSqlParameterSource()
+                        .addValue("professor_id", professorId)
+                        .addValue("type", identification.type())
+                        .addValue("value", identification.value());
+                updatedIdentifications.add(jdbcTemplate.queryForObject(String.format(insertSql, TABLE_NAME),
+                        insertParams, rowMapper));
+            }
+            return updatedIdentifications;
+        } catch (DataAccessException ex) {
+            log.error("Error trying to update identifications of professor: " + professorId, ex);
+            return new ArrayList<>();
+        }
+    }
 }
     

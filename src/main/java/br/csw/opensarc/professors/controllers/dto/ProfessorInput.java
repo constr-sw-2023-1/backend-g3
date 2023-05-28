@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ProfessorInput(
-        @NotBlank(message = "Id is required") String id,
         @NotBlank(message = "Registration is required") String registration,
         @NotBlank(message = "Name is required") String name,
         @NotNull(message = "Born date is required") LocalDate bornDate,

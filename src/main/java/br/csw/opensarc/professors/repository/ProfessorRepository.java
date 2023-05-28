@@ -2,6 +2,7 @@ package br.csw.opensarc.professors.repository;
 
 import br.csw.opensarc.professors.repository.entity.ProfessorEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorRowMapper;
+import br.csw.opensarc.professors.service.exception.InsertError;
 import org.springframework.transaction.annotation.Transactional;
 import br.csw.opensarc.professors.repository.mapper.ProfessorIdentificationRowMapper;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -82,6 +84,25 @@ public class ProfessorRepository {
             return jdbcTemplate.query(String.format(sql, TABLE_NAME), professorRowMapper);
         } catch (DataAccessException ex) {
             return new ArrayList<>();
+        }
+    }
+
+    public ProfessorEntity create(ProfessorEntity professorEntity) {
+        String sql = """
+                    insert into %s (registration, name, born_date, admission_date, active)
+                    values (:registration, :name, :born_date, :admission_date, :active)
+                    returning id, registration, name, born_date, admission_date, active;
+                """;
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource()
+                .addValue("registration", professorEntity.registration())
+                .addValue("name", professorEntity.name())
+                .addValue("born_date", professorEntity.bornDate().format(DateTimeFormatter.ISO_DATE))
+                .addValue("admission_date", professorEntity.admissionDate().format(DateTimeFormatter.ISO_DATE))
+                .addValue("active", professorEntity.active());
+        try {
+            return jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME), parameterSource, professorRowMapper);
+        } catch (DataAccessException ex) {
+            throw new InsertError(ex.getMessage());
         }
     }
 }

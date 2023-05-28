@@ -1,5 +1,6 @@
 package br.csw.opensarc.professors.service;
 
+import br.csw.opensarc.professors.controller.dto.Identification;
 import br.csw.opensarc.professors.controller.dto.ProfessorInput;
 import br.csw.opensarc.professors.controller.dto.SimpleProfessor;
 import br.csw.opensarc.professors.model.Professor;
@@ -61,5 +62,14 @@ public class ProfessorService {
 
                     return it.toProfessor(identificationEntities, certificationEntities);
                 });
+    }
+
+    @Transactional
+    public SimpleProfessor create(ProfessorInput createProfessor) {
+        List<IdentificationEntity> identification = createProfessor.identifications()
+                .stream().map(Identification::toEntity).toList();
+        ProfessorEntity entity = professorRepository.create(createProfessor.toProfessorEntity());
+        List<IdentificationEntity> insertedIdentifications = identificationsRepository.createBatch(entity.id(), identification);
+        return entity.toSimpleProfessor(insertedIdentifications.stream().map(IdentificationEntity::toIdentification).toList());
     }
 }

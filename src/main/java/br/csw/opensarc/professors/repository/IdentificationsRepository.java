@@ -2,6 +2,7 @@ package br.csw.opensarc.professors.repository;
 
 import br.csw.opensarc.professors.repository.entity.IdentificationEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorIdentificationRowMapper;
+import br.csw.opensarc.professors.service.exception.InsertError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -35,6 +36,25 @@ public class IdentificationsRepository {
         } catch (DataAccessException ex) {
             log.error("Error trying to get identifications of professors: " + professorId, ex);
             return new ArrayList<>();
+        }
+    }
+
+    public List<IdentificationEntity> createBatch(String professorId, List<IdentificationEntity> entities) {
+        try {
+            String sql = "INSERT INTO %s (professor_id, type, value) VALUES (:professor_id, :type, :value) returning *";
+
+            List<IdentificationEntity> returnEntities = new ArrayList<>();
+            for (IdentificationEntity entity : entities) {
+                MapSqlParameterSource parameterSource = new MapSqlParameterSource("professor_id", professorId)
+                        .addValue("type", entity.type())
+                        .addValue("value", entity.value());
+                IdentificationEntity returned = jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME), parameterSource, rowMapper);
+                returnEntities.add(returned);
+            }
+            return returnEntities;
+        } catch (DataAccessException ex) {
+            log.error("Error trying to insert indentifications for professors: " + professorId);
+            throw new InsertError(ex.getMessage());
         }
     }
 

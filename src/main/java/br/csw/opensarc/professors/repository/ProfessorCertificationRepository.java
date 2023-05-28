@@ -114,7 +114,7 @@ public class ProfessorCertificationRepository {
                     where professor_id = :professor_id
                 """;
 
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", id)
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", id);
         jdbcTemplate.update(sql, mapSqlParameterSource);
     }
 }

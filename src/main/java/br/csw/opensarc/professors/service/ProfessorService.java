@@ -34,4 +34,16 @@ public class ProfessorService {
                         .toList())
         );
     }
+
+    @Transactional(readOnly = true)
+    public Optional<SimpleProfessor> getProfessorById(String id) {
+        Optional<ProfessorEntity> professor = professorRepository.getProfessorById(id);
+        List<IdentificationEntity> identifications = identificationsRepository.getByProfessorId(id);
+
+        return professor.map(it ->
+                it.toSimpleProfessor(identifications.stream()
+                        .map(IdentificationEntity::toIdentification)
+                        .toList())
+        );
+    }
 }

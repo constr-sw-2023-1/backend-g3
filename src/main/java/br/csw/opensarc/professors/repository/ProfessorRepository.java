@@ -55,4 +55,21 @@ public class ProfessorRepository {
             return Optional.empty();
         }
     }
+        public Optional<ProfessorEntity> getProfessorById(String professorId) {
+            try {
+                log.debug("Try to get professor by ID: " + professorId);
+                String sql = String.format("""
+                    SELECT id, registration, name, born_date, admission_date, active
+                    FROM %s
+                    WHERE id = :id
+                    """, TABLE_NAME);
+                MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
+                        .addValue("id", professorId);
+
+                return jdbcTemplate.query(sql, mapSqlParameterSource, professorRowMapper).stream().findFirst();
+            } catch (DataAccessException ex) {
+                log.error("Error trying to get professor by ID: " + professorId, ex);
+                return Optional.empty();
+            }
+    }
 }

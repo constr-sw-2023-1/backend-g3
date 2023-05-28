@@ -38,4 +38,17 @@ public class ProfessorController {
         return updatedProfessor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
 
     }
+
+    @GetMapping("/{id}")
+    @Operation(operationId = "getById", description = "Get professor by its id", responses = {
+            @ApiResponse(responseCode = "200", description = "Professor found",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = SimpleProfessor.class))),
+
+            @ApiResponse(responseCode = "404", description = "Professor not found")
+    })
+    public ResponseEntity<SimpleProfessor> getProfessorById(@PathVariable("id") String id) {
+        Optional<SimpleProfessor> professor = professorService.getProfessorById(id);
+        return professor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

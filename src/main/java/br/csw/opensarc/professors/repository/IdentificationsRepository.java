@@ -22,7 +22,7 @@ public class IdentificationsRepository {
         rowMapper = new ProfessorIdentificationRowMapper();
     }
 
-    List<IdentificationEntity> getByProfessorId(String professorId) {
+    public List<IdentificationEntity> getByProfessorId(String professorId) {
         try {
             log.debug("Try to get identifications of professor: " + professorId);
             String sql = """

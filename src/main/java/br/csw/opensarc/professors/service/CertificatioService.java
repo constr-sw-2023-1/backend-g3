@@ -4,16 +4,15 @@ import br.csw.opensarc.professors.controller.dto.CertificationInput;
 import br.csw.opensarc.professors.model.Certification;
 import br.csw.opensarc.professors.repository.CertificationRepository;
 import br.csw.opensarc.professors.repository.entity.CertificationEntity;
-import org.springframework.http.ProblemDetail;
 
 import java.util.List;
 import java.util.Optional;
 
-public class CertificationProfessorService {
+public class CertificatioService {
 
     private final CertificationRepository certificationRepository;
 
-    public CertificationProfessorService(CertificationRepository certificationRepository) {
+    public CertificatioService(CertificationRepository certificationRepository) {
         this.certificationRepository = certificationRepository;
     }
 

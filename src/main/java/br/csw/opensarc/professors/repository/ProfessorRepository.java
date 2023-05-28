@@ -25,6 +25,22 @@ public class ProfessorRepository {
         professorRowMapper = new ProfessorRowMapper();
     }
 
+    public Optional<ProfessorEntity> getById(String professorId) {
+        try {
+            String sql = """
+                        select id, registration, name, born_date, admission_date, active
+                        from %s
+                        where id = :id
+                    """;
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
+                    .addValue("id", professorId);
+
+            return Optional.ofNullable(jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME), mapSqlParameterSource, professorRowMapper));
+        } catch (DataAccessException ex) {
+            return Optional.empty();
+        }
+    }
+
     public Optional<ProfessorEntity> updateProfessor(String professorId, ProfessorEntity professor) {
         try {
             log.debug("Try to update professor: " + professorId);

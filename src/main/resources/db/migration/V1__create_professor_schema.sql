@@ -24,8 +24,8 @@ create table if not exists professors.professors_certifications (
     certification_id uuid not null,
     professor_id uuid not null,
     "year" date not null default now(),
-    "semester" boolean not null,
-    description text not null
+    "semester" text not null,
+    unique(certification_id, professor_id)
 );
 create index if not exists professors_certifications_idx on professors.professors_certifications using btree (certification_id, professor_id);
 create index if not exists professors_certifications_professor_idx on professors.professors_certifications using btree (professor_id);

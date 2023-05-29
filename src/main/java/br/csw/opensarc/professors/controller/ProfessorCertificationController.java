@@ -93,10 +93,6 @@ public class ProfessorCertificationController {
         );
     }
 
-    @ExceptionHandler(ProfessorOrCertificationNotFoundException.class)
-    @ApiResponse(responseCode = "404", description = "Professor or Certification not found",
-            content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorMessage.class)))
     public ResponseEntity<ErrorMessage> handelProfessorNotFound(
             ProfessorOrCertificationNotFoundException exception) {
         return new ResponseEntity<>(

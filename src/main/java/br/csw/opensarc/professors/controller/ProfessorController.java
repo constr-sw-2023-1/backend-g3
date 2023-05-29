@@ -3,6 +3,7 @@ package br.csw.opensarc.professors.controller;
 import br.csw.opensarc.professors.controller.dto.ErrorMessage;
 import br.csw.opensarc.professors.controller.dto.ProfessorInput;
 import br.csw.opensarc.professors.controller.dto.SimpleProfessor;
+import br.csw.opensarc.professors.model.Certification;
 import br.csw.opensarc.professors.model.Professor;
 import br.csw.opensarc.professors.service.ProfessorService;
 import br.csw.opensarc.professors.service.exception.InsertError;
@@ -31,12 +32,15 @@ public class ProfessorController {
         this.professorService = professorService;
     }
 
-    @PutMapping("/{id}")
-    @Operation(summary = "Update professor by ID")
-    @ApiResponse(responseCode = "200", description = "Updated Professor",
-            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = SimpleProfessor.class)))
-    @ApiResponse(responseCode = "404", description = "Professor not found")
+    @Operation(operationId = "Update by Id", description = "Update professor by Id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Certification Updated",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Certification.class)
+                            )),
+                    @ApiResponse(responseCode = "404", description = "Invalid Id")
+            }
+    )
     public ResponseEntity<SimpleProfessor> updateProfessor(
             @Parameter(description = "ID of the professor to update", required = true)
             @PathVariable("id") String id,
@@ -53,6 +57,8 @@ public class ProfessorController {
             @RequestParam(required = false) Map<String, String> filters) {
         return ResponseEntity.ok(professorService.getAll(filters));
     }
+
+
 
     @GetMapping("/{id}")
     @Operation(summary = "Get professor by ID")

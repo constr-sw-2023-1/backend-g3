@@ -10,12 +10,17 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class ProfessorRepository {
+    private static final Map<String, String> typesOfFields = Map.of(
+            "id", "text",
+            "registration", "text",
+            "name", "text",
+            "bornDate", "date",
+            "admissionDate", "date",
+            "active", "boolean"
+    );
     private static final String TABLE_NAME = "professors.professor";
     private static final Logger log = LoggerFactory.getLogger(IdentificationsRepository.class);
     private final NamedParameterJdbcTemplate jdbcTemplate;
@@ -82,18 +87,22 @@ public class ProfessorRepository {
                     """);
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource();
             for (SearchFilters it : searchFilters) {
-                sql.append(String.format("\nAND %s %s %s", toSnake(it.field()), it.type().getOperator(), ":" + it.field()));
-                mapSqlParameterSource.addValue(":" + it.field(), it.value());
+                sql.append(String.format(" AND %s %s %s", toSnake(it.field()),
+                        it.type().getOperator(),
+                        "(:" + it.field() + ")::" + typesOfFields.getOrDefault(it.field(), "text")
+                ));
+                mapSqlParameterSource.addValue(it.field(), it.value());
             }
 
-            return jdbcTemplate.query(String.format(sql.toString(), TABLE_NAME), professorRowMapper);
+            return jdbcTemplate.query(String.format(sql.toString(), TABLE_NAME), mapSqlParameterSource, professorRowMapper);
         } catch (DataAccessException ex) {
+            log.error("Error trying to get all users", ex);
             return new ArrayList<>();
         }
     }
 
     private String toSnake(String field) {
-        return field.replace("([A-Z][a-z]+)", "$1_").toLowerCase();
+        return field.replaceAll("([A-Z])", "_$1").toLowerCase();
     }
 
     public ProfessorEntity create(ProfessorEntity professorEntity) {

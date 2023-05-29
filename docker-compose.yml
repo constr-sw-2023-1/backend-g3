@@ -17,7 +17,7 @@ services:
   professors-app:
     networks:
       - grupo3
-    image: .
+    build: .
     ports:
       - "8083:8083"
     depends_on:

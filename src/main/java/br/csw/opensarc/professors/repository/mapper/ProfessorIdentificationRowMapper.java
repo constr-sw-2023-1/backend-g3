@@ -12,7 +12,7 @@ public class ProfessorIdentificationRowMapper implements RowMapper<Identificatio
         String id = rs.getString("id");
         String type = rs.getString("type");
         String value = rs.getString("value");
-        String professorId = rs.getString("professorId");
+        String professorId = rs.getString("professor_id");
         return new IdentificationEntity(id, type, value, professorId);
     }
 }

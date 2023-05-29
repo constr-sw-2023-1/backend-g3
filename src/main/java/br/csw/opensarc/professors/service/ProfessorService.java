@@ -81,8 +81,6 @@ public class ProfessorService {
     public boolean delete(String id) {
         return professorRepository.getById(id)
                 .map(it -> {
-                    identificationsRepository.deleteAllForProfessor(id);
-                    professorCertificationRepository.deleteAllForProfessor(id);
                     professorRepository.delete(id);
                     return true;
                 })

@@ -6,8 +6,8 @@ create table if not exists professors.professor (
     id uuid not null DEFAULT uuid_generate_v4() primary key,
     registration text not null unique,
     name text not null,
-    bornDate date not null,
-    admissionDate date not null,
+    born_date date not null,
+    admission_date date not null,
     active boolean not null
 );
 create index if not exists registration_idx on professors.professor using btree (registration);

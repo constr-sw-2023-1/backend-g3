@@ -10,10 +10,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ProfessorRepository {
     private static final String TABLE_NAME = "professors.professor";
@@ -34,7 +34,7 @@ public class ProfessorRepository {
                         where id = :id
                     """;
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                    .addValue("id", professorId);
+                    .addValue("id", UUID.fromString(professorId));
 
             return Optional.ofNullable(jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME), mapSqlParameterSource, professorRowMapper));
         } catch (DataAccessException ex) {
@@ -56,14 +56,14 @@ public class ProfessorRepository {
                     returning id, registration, name, born_date, admission_date, active
                     """, TABLE_NAME);
             MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                    .addValue("id", professorId)
+                    .addValue("id", UUID.fromString(professorId))
                     .addValue("registration", professor.registration())
                     .addValue("name", professor.name())
                     .addValue("bornDate", professor.bornDate())
                     .addValue("admissionDate", professor.admissionDate())
                     .addValue("active", professor.active());
 
-            ProfessorEntity updatedProfessor = jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME),
+            ProfessorEntity updatedProfessor = jdbcTemplate.queryForObject(sql,
                     mapSqlParameterSource, professorRowMapper);
 
             return Optional.ofNullable(updatedProfessor);
@@ -105,22 +105,24 @@ public class ProfessorRepository {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource()
                 .addValue("registration", professorEntity.registration())
                 .addValue("name", professorEntity.name())
-                .addValue("born_date", professorEntity.bornDate().format(DateTimeFormatter.ISO_DATE))
-                .addValue("admission_date", professorEntity.admissionDate().format(DateTimeFormatter.ISO_DATE))
+                .addValue("born_date", professorEntity.bornDate())
+                .addValue("admission_date", professorEntity.admissionDate())
                 .addValue("active", professorEntity.active());
         try {
             return jdbcTemplate.queryForObject(String.format(sql, TABLE_NAME), parameterSource, professorRowMapper);
         } catch (DataAccessException ex) {
+            log.error("Error trying to insert into professor: ", ex);
             throw new InsertError(ex.getMessage());
         }
     }
 
     public void delete(String id) {
         String sql = """
-                    DELETE FROM %s
-                    where id = :id
+                    UPDATE %s
+                    SET active = false
+                    WHERE id = :id
                 """;
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("id", id);
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("id", UUID.fromString(id));
         jdbcTemplate.update(String.format(sql, TABLE_NAME), mapSqlParameterSource);
     }
 }

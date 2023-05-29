@@ -13,8 +13,8 @@ public class ProfessorRowMapper implements RowMapper<ProfessorEntity> {
         String id = rs.getString("id");
         String registration = rs.getString("registration");
         String name = rs.getString("name");
-        LocalDate bornDate = rs.getDate("bornDate").toLocalDate();
-        LocalDate admissionDate = rs.getDate("admissionDate").toLocalDate();
+        LocalDate bornDate = rs.getDate("born_date").toLocalDate();
+        LocalDate admissionDate = rs.getDate("admission_date").toLocalDate();
         boolean active = rs.getBoolean("active");
         return new ProfessorEntity(id, registration, name, bornDate, admissionDate, active);
     }

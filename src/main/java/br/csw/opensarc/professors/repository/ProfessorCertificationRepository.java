@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public class ProfessorCertificationRepository {
     private static final Logger log = LoggerFactory.getLogger(ProfessorCertificationRepository.class);
@@ -34,7 +35,7 @@ public class ProfessorCertificationRepository {
                     where pc.professor_id = :professor_id;
                 """;
         try {
-            return jdbcTemplate.query(sql, new MapSqlParameterSource("professor_id", professorId), rowMapper);
+            return jdbcTemplate.query(sql, new MapSqlParameterSource("professor_id", UUID.fromString(professorId)), rowMapper);
         } catch (DataAccessException exception) {
             return new ArrayList<>();
         }
@@ -48,8 +49,8 @@ public class ProfessorCertificationRepository {
                     values (:professor_id, :certification_id, :year, :semester)
                 """;
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                .addValue("professor_id", professorCertificationId.professorId())
-                .addValue("certification_id", professorCertificationId.certificationId())
+                .addValue("professor_id", professorCertificationId.getProfessorId())
+                .addValue("certification_id", professorCertificationId.getCertificationId())
                 .addValue("year", input.date())
                 .addValue("semester", input.semester().name());
         try {
@@ -68,8 +69,8 @@ public class ProfessorCertificationRepository {
                     AND pc.certification_id = :certification_id
                 """;
         try {
-            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", professorCertificationId.professorId())
-                    .addValue("certification_id", professorCertificationId.certificationId());
+            MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", professorCertificationId.getProfessorId())
+                    .addValue("certification_id", professorCertificationId.getCertificationId());
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, mapSqlParameterSource, rowMapper));
         } catch (DataAccessException exception) {
             return Optional.empty();
@@ -83,8 +84,8 @@ public class ProfessorCertificationRepository {
                     AND certification_id = :certification_id
                 """;
 
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", professorCertificationId.professorId())
-                .addValue("certification_id", professorCertificationId.certificationId());
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", professorCertificationId.getProfessorId())
+                .addValue("certification_id", professorCertificationId.getCertificationId());
         jdbcTemplate.update(sql, mapSqlParameterSource);
     }
 
@@ -97,8 +98,8 @@ public class ProfessorCertificationRepository {
                     AND certification_id = :certification_id
                 """;
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
-                .addValue("professor_id", professorCertificationId.professorId())
-                .addValue("certification_id", professorCertificationId.certificationId())
+                .addValue("professor_id", professorCertificationId.getProfessorId())
+                .addValue("certification_id", professorCertificationId.getCertificationId())
                 .addValue("year", input.date())
                 .addValue("semester", input.semester().name());
         try {
@@ -114,7 +115,7 @@ public class ProfessorCertificationRepository {
                     where professor_id = :professor_id
                 """;
 
-        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", id);
+        MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", UUID.fromString(id));
         jdbcTemplate.update(sql, mapSqlParameterSource);
     }
 }

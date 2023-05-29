@@ -38,7 +38,6 @@ public class ProfessorCertificationController {
             content = @Content(mediaType = "application/json",
                     schema = @Schema(implementation = ProfessorCertification.class)))
     public ResponseEntity<List<ProfessorCertification>> getAll(
-            @Parameter(in = ParameterIn.QUERY, name = "id", description = "User ID", schema = @Schema(type = "string"))
             @PathVariable("professorId") String professorId) {
         return ResponseEntity.ok(service.getAll(professorId));
     }

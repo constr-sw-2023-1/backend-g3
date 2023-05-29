@@ -23,4 +23,4 @@ services:
     depends_on:
       - professors-db
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://grupo3:5432/csw?user=postgres&password=postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://professors-db:5432/csw?user=postgres&password=postgres

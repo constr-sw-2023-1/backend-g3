@@ -34,7 +34,7 @@ public class ProfessorService {
     @Transactional
     public Optional<SimpleProfessor> updateProfessor(String id, ProfessorInput professorData) {
         ProfessorEntity entity = professorData.toProfessorEntity();
-        List<IdentificationEntity> identificationEntities = professorData.getIdentificationEntity();
+        List<IdentificationEntity> identificationEntities = professorData.toIdentificationEntity();
         List<IdentificationEntity> updated = identificationsRepository.updateIdentifications(id, identificationEntities);
 
         Optional<ProfessorEntity> updatedProfessor = professorRepository.updateProfessor(id, entity);

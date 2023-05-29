@@ -34,6 +34,7 @@ public class ProfessorController {
         this.professorService = professorService;
     }
 
+    @PutMapping("/{id}")
     @Operation(operationId = "Update by Id", description = "Update professor by Id",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Certification Updated",
@@ -44,7 +45,6 @@ public class ProfessorController {
             }
     )
     public ResponseEntity<SimpleProfessor> updateProfessor(
-            @Parameter(description = "ID of the professor to update", required = true)
             @PathVariable("id") String id,
             @Valid @RequestBody ProfessorInput professorData) {
         Optional<SimpleProfessor> updatedProfessor = professorService.updateProfessor(id, professorData);

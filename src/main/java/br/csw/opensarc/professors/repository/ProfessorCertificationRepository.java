@@ -29,7 +29,7 @@ public class ProfessorCertificationRepository {
 
     public List<ProfessorCertificationEntity> getAll(String professorId) {
         String sql = """
-                    SELECT id, professor_id, certification_id, level, name, institution, year, semester
+                    SELECT pc.id, pc.professor_id, pc.certification_id, c.level, c.name, c.institution, pc.year, pc.semester
                     FROM professors.professors_certifications pc
                         JOIN professors.certification c on pc.certification_id = c.id
                     where pc.professor_id = :professor_id;
@@ -46,7 +46,7 @@ public class ProfessorCertificationRepository {
 
         String sql = """
                     insert into professors.professors_certifications (professor_id, certification_id, year, semester)
-                    values (:professor_id, :certification_id, :year, :semester)
+                    values (:professor_id, :certification_id, (:year)::date, :semester)
                 """;
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("professor_id", professorCertificationId.getProfessorId())
@@ -56,6 +56,7 @@ public class ProfessorCertificationRepository {
         try {
             jdbcTemplate.update(sql, mapSqlParameterSource);
         } catch (DataAccessException ex) {
+            log.error("Errro trying to sync", ex);
             throw new InsertError(ex.getMessage());
         }
     }
@@ -92,7 +93,7 @@ public class ProfessorCertificationRepository {
     public void update(ProfessorCertificationId professorCertificationId, ProfessorCertificationInput input) {
         String sql = """
                     UPDATE professors.professors_certifications
-                        set year = :year,
+                        set year = (:year)::date,
                             semester = :semester
                     where professor_id = :professor_id
                     AND certification_id = :certification_id

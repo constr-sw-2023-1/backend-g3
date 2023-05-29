@@ -101,4 +101,6 @@ public class CertificationController {
                                                            @Valid @RequestBody CertificationInput certificationInput) {
         return ResponseEntity.of(certificatioService.updateCertification(id, certificationInput));
     }
+
+    //Fazer um PATCH
 }

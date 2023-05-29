@@ -9,10 +9,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class CertificationRepository {
 
@@ -55,7 +52,7 @@ public class CertificationRepository {
                     where id = :id
                 """;
         try {
-            MapSqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+            MapSqlParameterSource parameterSource = new MapSqlParameterSource("id", UUID.fromString(id));
             return Optional.ofNullable(jdbcTemplate.queryForObject(String.format(sql, TABLE), parameterSource, rowMapper));
         } catch (DataAccessException ex) {
             return Optional.empty();
@@ -91,7 +88,7 @@ public class CertificationRepository {
                     returning id
                 """;
         try {
-            MapSqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+            MapSqlParameterSource parameterSource = new MapSqlParameterSource("id", UUID.fromString(id));
             String deletedId = jdbcTemplate.queryForObject(String.format(sql, TABLE), parameterSource, String.class);
             return deletedId != null && !deletedId.isEmpty();
         } catch (DataAccessException ex) {

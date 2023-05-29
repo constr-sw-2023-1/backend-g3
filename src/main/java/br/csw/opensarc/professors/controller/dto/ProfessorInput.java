@@ -21,7 +21,7 @@ public record ProfessorInput(
         return new ProfessorEntity(registration, name, bornDate, admissionDate, active);
     }
 
-    public List<IdentificationEntity> getIdentificationEntity() {
+    public List<IdentificationEntity> toIdentificationEntity() {
         return identifications.stream().map(Identification::toEntity).toList();
     }
 }

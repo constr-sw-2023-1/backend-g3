@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 public record CertificationInput(
         @NotBlank(message = "Name is required") String name,
         @NotBlank(message = "Level is required") String level,
-        @NotBlank(message = "Description is required") String institution) {
+        @NotBlank(message = "Institution is required") String institution) {
 
     public CertificationEntity toEntity() {
         return new CertificationEntity(name, level, institution);

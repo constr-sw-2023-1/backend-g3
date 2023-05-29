@@ -68,12 +68,4 @@ public class ProfessorCertificationController {
                 HttpStatus.NOT_FOUND
         );
     }
-
-    @ExceptionHandler(InsertError.class)
-    public ResponseEntity<ErrorMessage> handelInsertError(InsertError exception) {
-        return new ResponseEntity<>(
-                new ErrorMessage(exception.getMessage(), "POST-01"),
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
-    }
 }

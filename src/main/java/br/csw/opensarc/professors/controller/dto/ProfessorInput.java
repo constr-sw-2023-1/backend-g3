@@ -25,8 +25,4 @@ public record ProfessorInput(
     public List<IdentificationEntity> toIdentificationEntity() {
         return identifications.stream().map(Identification::toEntity).toList();
     }
-
-    public Professor toSimpleInput() {
-
-    }
 }

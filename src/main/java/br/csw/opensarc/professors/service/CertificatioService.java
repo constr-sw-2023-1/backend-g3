@@ -53,7 +53,7 @@ public class CertificatioService {
                             input.level() != null ? input.level() : it.level(),
                             input.institution() != null ? input.institution() : it.institution()
                     );
-                    return certificationRepository.update(id, input.toEntity());
+                    return certificationRepository.update(id, toUpdate);
                 })
                 .map(CertificationEntity::toCertification);
 

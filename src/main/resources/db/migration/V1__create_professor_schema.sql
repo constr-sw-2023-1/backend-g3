@@ -23,7 +23,7 @@ create table if not exists professors.professors_certifications (
     id uuid not null DEFAULT uuid_generate_v4() primary key,
     certification_id uuid not null,
     professor_id uuid not null,
-    "year" date not null default now(),
+    "year" char(4) not null default now(),
     "semester" text not null,
     unique(certification_id, professor_id)
 );

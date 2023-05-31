@@ -4,6 +4,7 @@ import br.csw.opensarc.professors.repository.entity.ProfessorEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorRowMapper;
 import br.csw.opensarc.professors.service.dto.SearchFilters;
 import br.csw.opensarc.professors.service.exception.InsertError;
+import br.csw.opensarc.professors.service.exception.UpdateError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
@@ -47,7 +48,7 @@ public class ProfessorRepository {
         }
     }
 
-    public Optional<ProfessorEntity> updateProfessor(String professorId, ProfessorEntity professor) {
+    public ProfessorEntity updateProfessor(String professorId, ProfessorEntity professor) {
         try {
             log.debug("Try to update professor: " + professorId);
             String sql = String.format("""
@@ -68,13 +69,11 @@ public class ProfessorRepository {
                     .addValue("admissionDate", professor.admissionDate())
                     .addValue("active", professor.active());
 
-            ProfessorEntity updatedProfessor = jdbcTemplate.queryForObject(sql,
+            return jdbcTemplate.queryForObject(sql,
                     mapSqlParameterSource, professorRowMapper);
-
-            return Optional.ofNullable(updatedProfessor);
         } catch (DataAccessException ex) {
             log.error("Error trying to update professor: " + professorId, ex);
-            return Optional.empty();
+            throw new UpdateError(ex.getMessage());
         }
     }
 

@@ -2,11 +2,8 @@ package br.csw.opensarc.professors.controller;
 
 import br.csw.opensarc.professors.controller.dto.ErrorMessage;
 import br.csw.opensarc.professors.controller.dto.ProfessorInput;
-import br.csw.opensarc.professors.controller.dto.SimpleProfessor;
-import br.csw.opensarc.professors.model.Certification;
 import br.csw.opensarc.professors.model.Professor;
 import br.csw.opensarc.professors.service.ProfessorService;
-import br.csw.opensarc.professors.service.exception.InsertError;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -18,9 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
@@ -37,18 +36,37 @@ public class ProfessorController {
     @PutMapping("/{id}")
     @Operation(operationId = "Update by Id", description = "Update professor by Id",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Certification Updated",
+                    @ApiResponse(responseCode = "200", description = "Professor Updated",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Certification.class)
+                                    schema = @Schema(implementation = Professor.class)
                             )),
+                    @ApiResponse(responseCode = "400", description = "Invalid fields",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessage.class))
+                    ),
                     @ApiResponse(responseCode = "404", description = "Invalid Id")
             }
     )
-    public ResponseEntity<SimpleProfessor> updateProfessor(
+    public ResponseEntity<Professor> updateProfessor(
             @PathVariable("id") String id,
             @Valid @RequestBody ProfessorInput professorData) {
-        Optional<SimpleProfessor> updatedProfessor = professorService.updateProfessor(id, professorData);
+        Optional<Professor> updatedProfessor = professorService.updateProfessor(id, professorData);
         return updatedProfessor.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}")
+    @Operation(operationId = "Patch by id", description = "Partial update professor by id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Updated professor",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Professor.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Id not found")
+            }
+    )
+    public ResponseEntity<Professor> partialUpdate(@PathVariable("id") String professorId,
+                                                   @RequestBody ProfessorInput professorInput) {
+        return ResponseEntity.of(professorService.partialUpdate(professorId, professorInput));
     }
 
     @GetMapping
@@ -65,19 +83,20 @@ public class ProfessorController {
                     "Like\tlike\tdescription={like}%database%"
     )
     @ApiResponse(responseCode = "200", description = "OK",
-    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, array = @ArraySchema(schema = @Schema(implementation = Professor.class)))
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    array = @ArraySchema(schema = @Schema(implementation = Professor.class))
+            )
     )
-    @Parameter(name ="id", description = "Query filters to Filter the id", in = ParameterIn.QUERY)
-    @Parameter(name ="registration", description = "Query filters to Filter the registration", in = ParameterIn.QUERY)
-    @Parameter(name ="name", description = "Query filters to Filter the name", in = ParameterIn.QUERY)
-    @Parameter(name ="bornDate", description = "Query filters to Filter the bornDate", in = ParameterIn.QUERY)
-    @Parameter(name ="admissionDate", description = "Query filters to Filter the admissionDate", in = ParameterIn.QUERY)
-    @Parameter(name ="active", description = "Query filters to Filter the active", in = ParameterIn.QUERY)
+    @Parameter(name = "id", description = "Query filters to Filter the id", in = ParameterIn.QUERY)
+    @Parameter(name = "registration", description = "Query filters to Filter the registration", in = ParameterIn.QUERY)
+    @Parameter(name = "name", description = "Query filters to Filter the name", in = ParameterIn.QUERY)
+    @Parameter(name = "bornDate", description = "Query filters to Filter the bornDate", in = ParameterIn.QUERY)
+    @Parameter(name = "admissionDate", description = "Query filters to Filter the admissionDate", in = ParameterIn.QUERY)
+    @Parameter(name = "active", description = "Query filters to Filter the active", in = ParameterIn.QUERY)
     public ResponseEntity<List<Professor>> getAll(
             @RequestParam(required = false) Map<String, String> filters) {
         return ResponseEntity.ok(professorService.getAll(filters));
     }
-
 
 
     @GetMapping("/{id}")
@@ -96,8 +115,11 @@ public class ProfessorController {
     @Operation(summary = "Create a new professor")
     @ApiResponse(responseCode = "201", description = "Created",
             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = SimpleProfessor.class)))
-    public ResponseEntity<SimpleProfessor> createProfessor(
+                    schema = @Schema(implementation = Professor.class)))
+    @ApiResponse(responseCode = "400", description = "Invalid fields",
+            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessage.class))
+    )
+    public ResponseEntity<Professor> createProfessor(
             @Parameter(description = "Professor data", required = true)
             @Valid @RequestBody ProfessorInput createProfessor) {
         return new ResponseEntity<>(professorService.create(createProfessor), HttpStatus.CREATED);

@@ -15,7 +15,7 @@ public class ProfessorCertificationRowMapper implements RowMapper<ProfessorCerti
         String level = rs.getString("level");
         String name = rs.getString("name");
         String institution = rs.getString("institution");
-        String year = Integer.toString(rs.getDate("year").toLocalDate().getYear());
+        String year = rs.getString("year");
         String semester = rs.getString("semester");
         return new ProfessorCertificationEntity(id, professor_id, certification_id, level, name, institution, year, semester);
     }

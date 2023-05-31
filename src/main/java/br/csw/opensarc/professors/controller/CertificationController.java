@@ -102,5 +102,10 @@ public class CertificationController {
         return ResponseEntity.of(certificatioService.updateCertification(id, certificationInput));
     }
 
-    //Fazer um PATCH
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<Certification> editCertification(@PathVariable("id") String id,
+                                                                @RequestBody CertificationInput certificationInput) {
+        return ResponseEntity.of(certificatioService.updatePartialCertification(id, certificationInput));
+    }
 }

@@ -49,13 +49,13 @@ public class CertificatioService {
         return getById(id)
                 .flatMap(it -> {
                     CertificationEntity toUpdate = new CertificationEntity(
-                        input.name() != null ? input.name():it.name(),
-                        input.level() != null ? input.level():it.level(),
-                        input.instituition() != null ? input.instituition():it.instituition()
+                            input.name() != null ? input.name() : it.name(),
+                            input.level() != null ? input.level() : it.level(),
+                            input.institution() != null ? input.institution() : it.institution()
                     );
                     return certificationRepository.update(id, input.toEntity());
-                    })
+                })
                 .map(CertificationEntity::toCertification);
-                
+
     }
 }

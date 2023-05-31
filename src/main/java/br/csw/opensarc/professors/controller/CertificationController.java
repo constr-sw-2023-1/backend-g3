@@ -105,8 +105,17 @@ public class CertificationController {
     }
 
 
+    @Operation(operationId = "Update by Id", description = "Update certification by Id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Certification Updated",
+                            content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                    schema = @Schema(implementation = Certification.class)
+                            )),
+                    @ApiResponse(responseCode = "404", description = "InvalidId")
+            }
+    )
     @PatchMapping("/{id}")
-    public ResponseEntity<Certification> editCertification(@PathVariable("id") String id,
+    public ResponseEntity<Certification> editCertificationPartial(@PathVariable("id") String id,
                                                                 @RequestBody CertificationInput certificationInput) {
         return ResponseEntity.of(certificatioService.updatePartialCertification(id, certificationInput));
     }

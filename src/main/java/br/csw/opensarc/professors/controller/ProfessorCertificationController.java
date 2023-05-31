@@ -5,18 +5,17 @@ import br.csw.opensarc.professors.controller.dto.ProfessorCertificationId;
 import br.csw.opensarc.professors.controller.dto.ProfessorCertificationSimpleInput;
 import br.csw.opensarc.professors.model.ProfessorCertification;
 import br.csw.opensarc.professors.service.ProfessorCertificationService;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 @RestController
 @RequestMapping("/professors/{professorId}/certifications")

@@ -5,6 +5,7 @@ import br.csw.opensarc.professors.controller.dto.ProfessorInput;
 import br.csw.opensarc.professors.model.Professor;
 import br.csw.opensarc.professors.service.ProfessorService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,8 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @ControllerAdvice

@@ -1,7 +1,6 @@
 package br.csw.opensarc.professors.repository;
 
 import br.csw.opensarc.professors.controller.dto.ProfessorCertificationId;
-import br.csw.opensarc.professors.controller.dto.ProfessorCertificationInput;
 import br.csw.opensarc.professors.controller.dto.ProfessorCertificationSimpleInput;
 import br.csw.opensarc.professors.repository.entity.ProfessorCertificationEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorCertificationRowMapper;

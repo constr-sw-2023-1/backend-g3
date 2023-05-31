@@ -11,7 +11,6 @@ import br.csw.opensarc.professors.service.exception.CertificationNotFoundExcepti
 import br.csw.opensarc.professors.service.exception.ProfessorOrCertificationNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 

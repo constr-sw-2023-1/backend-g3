@@ -1,6 +1,5 @@
 package br.csw.opensarc.professors.repository;
 
-import br.csw.opensarc.professors.model.Certification;
 import br.csw.opensarc.professors.repository.entity.CertificationEntity;
 import br.csw.opensarc.professors.repository.mapper.CertificationRowMapper;
 import org.slf4j.Logger;

@@ -44,4 +44,18 @@ public class CertificatioService {
                 .map(CertificationEntity::toCertification)
                 .toList();
     }
+
+    public Optional<Certification> updatePartialCertification(String id, CertificationInput input) {
+        return getById(id)
+                .flatMap(it -> {
+                    CertificationEntity toUpdate = new CertificationEntity(
+                        input.name() != null ? input.name():it.name(),
+                        input.level() != null ? input.level():it.level(),
+                        input.instituition() != null ? input.instituition():it.instituition()
+                    );
+                    return certificationRepository.update(id, input.toEntity());
+                    })
+                .map(CertificationEntity::toCertification);
+                
+    }
 }

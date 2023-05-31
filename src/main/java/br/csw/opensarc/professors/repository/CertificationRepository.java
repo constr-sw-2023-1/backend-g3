@@ -69,7 +69,7 @@ public class CertificationRepository {
                 """;
         try {
             MapSqlParameterSource parameterSource = new MapSqlParameterSource(Map.of(
-                    "id", id,
+                    "id", UUID.fromString(id),
                     "name", entityToUpdate.name(),
                     "level", entityToUpdate.level(),
                     "institution", entityToUpdate.institution()

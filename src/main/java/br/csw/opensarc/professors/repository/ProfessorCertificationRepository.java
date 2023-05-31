@@ -119,17 +119,4 @@ public class ProfessorCertificationRepository {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", UUID.fromString(id));
         jdbcTemplate.update(sql, mapSqlParameterSource);
     }
-
-    public void createBatch(String professorId, List<ProfessorCertificationInput> certifications) {
-        String sql = """
-                    INSERT INTO professors.professors_certifications (professor_id, certification_id, year, semester)
-                    values (:professor_id, :certification_id, :year, :semester)
-                """;
-        try {
-            certifications.stream().map()
-        } catch (DataAccessException ex ) {
-            log.error("Could not Create sync with professor " + professorId + " amd certification", ex);
-        }
-
-    }
 }

@@ -2,7 +2,7 @@ package br.csw.opensarc.professors.repository;
 
 import br.csw.opensarc.professors.controller.dto.ProfessorCertificationId;
 import br.csw.opensarc.professors.controller.dto.ProfessorCertificationInput;
-import br.csw.opensarc.professors.model.ProfessorCertification;
+import br.csw.opensarc.professors.controller.dto.ProfessorCertificationSimpleInput;
 import br.csw.opensarc.professors.repository.entity.ProfessorCertificationEntity;
 import br.csw.opensarc.professors.repository.mapper.ProfessorCertificationRowMapper;
 import br.csw.opensarc.professors.service.exception.InsertError;
@@ -42,16 +42,16 @@ public class ProfessorCertificationRepository {
     }
 
     public void insert(ProfessorCertificationId professorCertificationId,
-                       ProfessorCertificationInput input) {
+                       ProfessorCertificationSimpleInput input) {
 
         String sql = """
                     insert into professors.professors_certifications (professor_id, certification_id, year, semester)
-                    values (:professor_id, :certification_id, (:year)::date, :semester)
+                    values (:professor_id, :certification_id, :year, :semester)
                 """;
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("professor_id", professorCertificationId.getProfessorId())
                 .addValue("certification_id", professorCertificationId.getCertificationId())
-                .addValue("year", input.date())
+                .addValue("year", input.year())
                 .addValue("semester", input.semester().name());
         try {
             jdbcTemplate.update(sql, mapSqlParameterSource);
@@ -90,10 +90,10 @@ public class ProfessorCertificationRepository {
         jdbcTemplate.update(sql, mapSqlParameterSource);
     }
 
-    public void update(ProfessorCertificationId professorCertificationId, ProfessorCertificationInput input) {
+    public void update(ProfessorCertificationId professorCertificationId, ProfessorCertificationSimpleInput input) {
         String sql = """
                     UPDATE professors.professors_certifications
-                        set year = (:year)::date,
+                        set year = :year,
                             semester = :semester
                     where professor_id = :professor_id
                     AND certification_id = :certification_id
@@ -101,7 +101,7 @@ public class ProfessorCertificationRepository {
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource()
                 .addValue("professor_id", professorCertificationId.getProfessorId())
                 .addValue("certification_id", professorCertificationId.getCertificationId())
-                .addValue("year", input.date())
+                .addValue("year", input.year())
                 .addValue("semester", input.semester().name());
         try {
             jdbcTemplate.update(sql, mapSqlParameterSource);
@@ -118,5 +118,18 @@ public class ProfessorCertificationRepository {
 
         MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource("professor_id", UUID.fromString(id));
         jdbcTemplate.update(sql, mapSqlParameterSource);
+    }
+
+    public void createBatch(String professorId, List<ProfessorCertificationInput> certifications) {
+        String sql = """
+                    INSERT INTO professors.professors_certifications (professor_id, certification_id, year, semester)
+                    values (:professor_id, :certification_id, :year, :semester)
+                """;
+        try {
+            certifications.stream().map()
+        } catch (DataAccessException ex ) {
+            log.error("Could not Create sync with professor " + professorId + " amd certification", ex);
+        }
+
     }
 }

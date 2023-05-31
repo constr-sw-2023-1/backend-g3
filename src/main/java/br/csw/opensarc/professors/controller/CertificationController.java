@@ -50,9 +50,9 @@ public class CertificationController {
                                     schema = @Schema(implementation = Certification.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404", description = "Invalid body on request",
+                    @ApiResponse(responseCode = "400", description = "Invalid body on request",
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Certification.class))
+                                    schema = @Schema(implementation = ErrorMessage.class))
                     )
             }
     )
@@ -67,7 +67,7 @@ public class CertificationController {
                                     schema = @Schema(implementation = Certification.class)
                             )
                     ),
-                    @ApiResponse(responseCode = "404", description = "Invalid Id")
+                    @ApiResponse(responseCode = "400", description = "Invalid Id")
             }
     )
     @GetMapping("/{id}")
@@ -93,7 +93,9 @@ public class CertificationController {
                             content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                                     schema = @Schema(implementation = Certification.class)
                             )),
-                    @ApiResponse(responseCode = "404", description = "Invalid Id")
+                    @ApiResponse(responseCode = "400", description = "Missing field", content =
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "404", description = "InvalidId")
             }
     )
     @PutMapping("/{id}")

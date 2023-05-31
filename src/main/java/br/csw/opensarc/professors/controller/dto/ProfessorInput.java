@@ -14,6 +14,7 @@ public record ProfessorInput(
         @NotNull(message = "Born date is required") LocalDate bornDate,
         @NotNull(message = "Admission date is required") LocalDate admissionDate,
         @NotNull(message = "Active is required") Boolean active,
+        List<ProfessorCertificationInput> certifications,
         @NotNull(message = "Identifications are required") List<Identification> identifications) {
 
 
@@ -23,5 +24,9 @@ public record ProfessorInput(
 
     public List<IdentificationEntity> toIdentificationEntity() {
         return identifications.stream().map(Identification::toEntity).toList();
+    }
+
+    public Professor toSimpleInput() {
+
     }
 }

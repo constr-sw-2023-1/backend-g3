@@ -6,8 +6,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 public record ProfessorCertificationInput(
-        @Pattern(
-                regexp = "\\d{4}-(0\\d|1[012])-(0\\d|[12]\\d|3[01])",
-                message = "Date should be on pattern yyyy-MM-dd") String date,
-        @NotNull Semester semester) {
+        @NotBlank String id,
+        @Pattern(regexp = "(19|20)\\d{2}",
+                message = "Date should be on pattern yyyy-MM-dd") String year,
+        @NotNull Semester semester
+) {
+
+    public ProfessorCertificationSimpleInput toSimple() {
+        return new ProfessorCertificationSimpleInput(year, semester);
+    }
 }

@@ -1,5 +1,6 @@
 package br.csw.opensarc.professors;
 
+import br.csw.opensarc.professors.config.CorsConfig;
 import br.csw.opensarc.professors.config.ProfessorsConfig;
 import br.csw.opensarc.professors.controller.errors.GenericErrors;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -9,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import({ProfessorsConfig.class, GenericErrors.class})
+@Import({ProfessorsConfig.class, GenericErrors.class, CorsConfig.class})
 @OpenAPIDefinition(info = @Info(title = "Sistema de gerenciamento de professores", version = "1.0.0"))
 public class ProfessorsApplication {
 

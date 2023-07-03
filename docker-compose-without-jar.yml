@@ -19,7 +19,7 @@ services:
       - grupo3
     build:
       context: .
-      dockerfile: ./DockerfileJar
+      dockerfile: ./DockerfileDefault
     ports:
       - "8083:8083"
     depends_on:

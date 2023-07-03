@@ -1,5 +1,4 @@
 from openjdk:17-alpine
-expose 8083
-copy . .
-run ./gradlew clean build -x test
-cmd ./gradlew bootRun
+workdir /app
+copy build/libs/professors-0.0.1-SNAPSHOT.jar /app/professors.jar
+cmd java -jar professors.jar

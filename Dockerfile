@@ -1,4 +1,15 @@
+FROM gradle:latest AS builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN gradle build --no-daemon
+
 from openjdk:17-alpine
+
 workdir /app
-copy build/libs/professors-0.0.1-SNAPSHOT.jar /app/professors.jar
-cmd java -jar professors.jar
+
+COPY --from=builder /app/build/libs/*.jar app.jar
+
+cmd java -jar app.jar

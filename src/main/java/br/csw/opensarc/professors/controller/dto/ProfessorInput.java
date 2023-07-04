@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public record ProfessorInput(
@@ -20,6 +21,10 @@ public record ProfessorInput(
 
     public ProfessorEntity toProfessorEntity() {
         return new ProfessorEntity(registration, name, bornDate, admissionDate, active);
+    }
+
+    public List<ProfessorCertificationInput> certifications() {
+        return this.certifications == null ? new ArrayList<>() : this.certifications;
     }
 
     public List<IdentificationEntity> toIdentificationEntity() {

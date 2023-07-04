@@ -78,7 +78,7 @@ public class ProfessorService {
         ProfessorEntity entity = professorRepository.create(createProfessor.toProfessorEntity());
         List<Identification> insertedIdentifications = identificationsRepository.createBatch(entity.id(), identification)
                 .stream().map(IdentificationEntity::toIdentification).toList();
-        List<ProfessorCertification> insertedCertifications = professorCertificationService.createBatch(entity.id(), createProfessor.certifications() == null ? new ArrayList<>() : createProfessor.certifications());
+        List<ProfessorCertification> insertedCertifications = professorCertificationService.createBatch(entity.id(), createProfessor.certifications());
         return entity.toProfessor(insertedIdentifications, insertedCertifications);
     }
 
